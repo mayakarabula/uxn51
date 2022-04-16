@@ -1,0 +1,9 @@
+.DS*
+
+/bin
+
+*.rom
+*.sym
+
+*snarf
+*theme
