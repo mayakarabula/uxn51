@@ -22,6 +22,20 @@ The first parameter is the rom file, the subsequent arguments will be accessible
 - `a0` file(missing)
 - `c0` datetime(missing)
 
+## Tests
+
+Build and run tests with reference emulator:
+
+```sh
+uxnasm etc/tests.tal bin/tests.rom && uxncli bin/tests.rom
+```
+
+Format tests for Javascript:
+
+```sh
+uxnasm etc/format.tal bin/format.rom && uxncli bin/format.rom bin/tests.rom
+```
+
 ## Need a hand?
 
 The following resources are a good place to start:

@@ -1,0 +1,132 @@
+( test uxnVM operations )
+
+|0000
+
+	@id $1
+
+|0100
+
+	( arithmetic )
+	#0000 #0000 ADD2 [ #0000 ] ;res2 JSR2
+	#ffff #0000 ADD2 [ #ffff ] ;res2 JSR2
+	#ffff #0001 ADD2 [ #0000 ] ;res2 JSR2
+	#0001 #ffff ADD2 [ #0000 ] ;res2 JSR2
+	#ffff #ffff ADD2 [ #fffe ] ;res2 JSR2
+	#fffe #ffff ADD2 [ #fffd ] ;res2 JSR2
+	#ff #00 ADD [ #ff ] ;res1 JSR2
+	#ff #01 ADD [ #00 ] ;res1 JSR2
+	#01 #ff ADD [ #00 ] ;res1 JSR2
+	#ff #ff ADD [ #fe ] ;res1 JSR2
+	#fe #ff ADD [ #fd ] ;res1 JSR2
+	#1337 #ae40 SUB2 [ #64f7 ] ;res2 JSR2
+	#ae40 #1337 SUB2 [ #9b09 ] ;res2 JSR2
+	#ffff #0000 SUB2 [ #ffff ] ;res2 JSR2
+	#ffff #0001 SUB2 [ #fffe ] ;res2 JSR2
+	#0001 #ffff SUB2 [ #0002 ] ;res2 JSR2
+	#ffff #ffff SUB2 [ #0000 ] ;res2 JSR2
+	#fffe #ffff SUB2 [ #ffff ] ;res2 JSR2
+	#ff #00 SUB [ #ff ] ;res1 JSR2
+	#ff #01 SUB [ #fe ] ;res1 JSR2
+	#01 #ff SUB [ #02 ] ;res1 JSR2
+	#ff #ff SUB [ #00 ] ;res1 JSR2
+	#fe #ff SUB [ #ff ] ;res1 JSR2
+	#00 #01 MUL [ #00 ] ;res1 JSR2
+	#3f #e7 MUL [ #d9 ] ;res1 JSR2
+	#37 #3f MUL [ #89 ] ;res1 JSR2
+	#10 #02 MUL [ #20 ] ;res1 JSR2
+	#ff #00 MUL [ #00 ] ;res1 JSR2
+	#ff #02 MUL [ #fe ] ;res1 JSR2
+	( TODO AND )
+	( TODO ORA )
+	#00 #00 EOR [ #00 ] ;res1 JSR2
+	#ff #00 EOR [ #ff ] ;res1 JSR2
+	#aa #55 EOR [ #ff ] ;res1 JSR2
+	#ff #ff EOR [ #00 ] ;res1 JSR2
+	#ffff #ff00 EOR2 [ #00ff ] ;res2 JSR2
+	#aaaa #5555 EOR2 [ #ffff ] ;res2 JSR2
+	#ff #00 SFT [ #ff ] ;res1 JSR2
+	#ff #01 SFT [ #7f ] ;res1 JSR2
+	#ff #07 SFT [ #01 ] ;res1 JSR2
+	#ff #08 SFT [ #00 ] ;res1 JSR2
+	#ff #09 SFT [ #00 ] ;res1 JSR2
+	#ff #0e SFT [ #00 ] ;res1 JSR2
+	#ff #0f SFT [ #00 ] ;res1 JSR2
+	#ffff #00 SFT2 [ #ffff ] ;res2 JSR2
+	#ffff #01 SFT2 [ #7fff ] ;res2 JSR2
+	#ffff #02 SFT2 [ #3fff ] ;res2 JSR2
+	#ffff #07 SFT2 [ #01ff ] ;res2 JSR2
+	#ffff #08 SFT2 [ #00ff ] ;res2 JSR2
+	#ffff #09 SFT2 [ #007f ] ;res2 JSR2
+	#ffff #0a SFT2 [ #003f ] ;res2 JSR2
+	#ffff #0e SFT2 [ #0003 ] ;res2 JSR2
+	#ffff #0f SFT2 [ #0001 ] ;res2 JSR2
+	#ff #10 SFT [ #fe ] ;res1 JSR2
+	#ff #70 SFT [ #80 ] ;res1 JSR2
+	#ff #80 SFT [ #00 ] ;res1 JSR2
+	#ff #90 SFT [ #00 ] ;res1 JSR2
+	#ff #e0 SFT [ #00 ] ;res1 JSR2
+	#ff #f0 SFT [ #00 ] ;res1 JSR2
+	#ffff #10 SFT2 [ #fffe ] ;res2 JSR2
+	#ffff #20 SFT2 [ #fffc ] ;res2 JSR2
+	#ffff #70 SFT2 [ #ff80 ] ;res2 JSR2
+	#ffff #80 SFT2 [ #ff00 ] ;res2 JSR2
+	#ffff #90 SFT2 [ #fe00 ] ;res2 JSR2
+	#ffff #a0 SFT2 [ #fc00 ] ;res2 JSR2
+	#ffff #e0 SFT2 [ #c000 ] ;res2 JSR2
+	#ffff #f0 SFT2 [ #8000 ] ;res2 JSR2
+	#ff #12 SFT [ #7e ] ;res1 JSR2
+	#ff #77 SFT [ #80 ] ;res1 JSR2
+	#ff #11 SFT [ #fe ] ;res1 JSR2
+	#ff #3f SFT [ #00 ] ;res1 JSR2
+	#ff #ff SFT [ #00 ] ;res1 JSR2
+	#ffff #11 SFT2 [ #fffe ] ;res2 JSR2
+	#ffff #12 SFT2 [ #7ffe ] ;res2 JSR2
+	#ffff #21 SFT2 [ #fffc ] ;res2 JSR2
+	#ffff #7e SFT2 [ #0180 ] ;res2 JSR2
+	#ffff #83 SFT2 [ #ff00 ] ;res2 JSR2
+	#ffff #92 SFT2 [ #fe00 ] ;res2 JSR2
+	#ffff #2a SFT2 [ #00fc ] ;res2 JSR2
+	#ffff #e3 SFT2 [ #c000 ] ;res2 JSR2
+
+	#0a18 DEO #0a18 DEO #010f DEO
+
+BRK
+
+@res1 ( a b -- )
+
+	EQU ,res JMP
+
+@res2 ( a* b* -- )
+
+	EQU2
+
+@res ( pass -- )
+
+	.id LDZ 
+		DUP #07 AND ,&no-lb JCN #0a18 DEO &no-lb 
+		INCk .id STZ 
+		,print/byte JSR
+	#2018 DEO
+	#00 SWP #10 SFT ;msg ADD2 LDA2 ,print-str JSR
+	#2018 DEO 
+
+JMP2r
+
+@print ( short* -- )
+
+	SWP ,&byte JSR
+	&byte ( byte -- ) DUP #04 SFT ,&char JSR
+	&char ( char -- ) #0f AND DUP #09 GTH #27 MUL ADD #30 ADD #18 DEO
+
+JMP2r
+
+@print-str ( str* -- )
+
+	&while
+		LDAk #18 DEO
+		INC2 LDAk ,&while JCN
+	POP2
+
+JMP2r
+
+@msg :&fail :&pass &pass "pass $1 &fail "fail $1

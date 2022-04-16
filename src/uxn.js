@@ -1,5 +1,22 @@
 'use strict'
 
+// Debugger 
+
+let opcodes = [
+	"LIT", "INC", "POP", "DUP", "NIP", "SWP", "OVR", "ROT",
+	"EQU", "NEQ", "GTH", "LTH", "JMP", "JCN", "JSR", "STH",
+	"LDZ", "STZ", "LDR", "STR", "LDA", "STA", "DEI", "DEO",
+	"ADD", "SUB", "MUL", "DIV", "AND", "ORA", "EOR", "SFT",
+	"BRK"]
+
+function getname(byte) {
+
+	return opcodes[byte & 0x1f] + (!!(byte & 0x20) ? "2" : "") + (!!(byte & 0x40) ? "r" : "") + (!!(byte & 0x80) ? "k" : "")
+
+}
+
+// Core
+
 function Stack(u) {
 
 	this.mem = new Uint8Array(0xfe)
@@ -59,11 +76,11 @@ function Uxn () {
 	}
 
 	this.eval = (pc) => {
-		let a,b,c,instr
+		let a, b, c, instr
 		if(!pc || this.dev[0x0f])
 			return 0;
 		while((instr = this.ram[pc++])){
-			// console.log(opcode(instr), pc, instr)
+			console.log(getname(instr), pc, instr)
 			/* return */
 			if(instr & 0x40){
 				this.src = this.rst;
@@ -90,13 +107,13 @@ function Uxn () {
 			}
 			switch(instr & 0x1f) {
 			/* Stack */
-			case 0x00: /* LIT */ 
-				if(instr & 0x20) { a = this.peek16(pc); this.push16(a); pc += 2; } 
+			case 0x00: /* LIT */
+				if(instr & 0x20) { a = this.peek16(pc); this.push16(a); pc += 2; }
 				else { a = this.ram[pc]; this.push8(a); pc++; } break;
-			case 0x01: /* INC */ a = this.pop(); this.push(a + 1); break;
-			case 0x02: /* POP */ a = this.pop(); break;
+			case 0x01: /* INC */ this.push(this.pop() + 1); break;
+			case 0x02: /* POP */ this.pop(); break;
 			case 0x03: /* DUP */ a = this.pop(); this.push(a); this.push(a); break;
-			case 0x04: /* NIP */ a = this.pop(); b = this.pop(); this.push(a); break;
+			case 0x04: /* NIP */ a = this.pop(); this.pop(); this.push(a); break;
 			case 0x05: /* SWP */ a = this.pop(); b = this.pop(); this.push(a); this.push(b); break;
 			case 0x06: /* OVR */ a = this.pop(); b = this.pop(); this.push(b); this.push(a); this.push(b); break;
 			case 0x07: /* ROT */ a = this.pop(); b = this.pop(); c = this.pop(); this.push(b); this.push(a); this.push(c); break;
@@ -105,10 +122,10 @@ function Uxn () {
 			case 0x09: /* NEQ */ a = this.pop(); b = this.pop(); this.push8(src, b != a); break;
 			case 0x0a: /* GTH */ a = this.pop(); b = this.pop(); this.push8(src, b > a); break;
 			case 0x0b: /* LTH */ a = this.pop(); b = this.pop(); this.push8(src, b < a); break;
-			case 0x0c: /* JMP */ a = this.pop(); pc = this.jump(a, pc); break;
+			case 0x0c: /* JMP */ pc = this.jump(this.pop(), pc); break;
 			case 0x0d: /* JCN */ a = this.pop(); if(this.pop()) pc = this.jump(a, pc); break;
-			case 0x0e: /* JSR */ a = this.pop(); this.dst.push16(pc); pc = this.jump(a, pc); break;
-			case 0x0f: /* STH */ a = this.pop(); this.dst.push16(a); break;
+			case 0x0e: /* JSR */ this.dst.push16(pc); pc = this.jump(this.pop(), pc); break;
+			case 0x0f: /* STH */ this.dst.push16(this.pop()); break;
 			/* Memory */
 			case 0x10: /* LDZ */ this.push(this.peek(this.pop8())); break;
 			case 0x11: /* STZ */ this.poke(this.pop8(), this.pop()); break;
