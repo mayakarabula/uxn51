@@ -3,12 +3,13 @@
 <head>
 	<meta charset="utf-8"/>
 	<script src="etc/program.js"></script>
+	<script src="src/emu.js"></script>
 	<script src="src/uxn.js"></script>
 </head>
 <body>
 <script type="text/javascript">
 	'use strict'
-	const uxn = new Uxn()
+	const uxn = new Uxn(new Emu())
 	uxn.load(program).eval(0x0100)
 	console.log(uxn.wst.mem)
 </script>

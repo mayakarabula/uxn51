@@ -1,22 +1,5 @@
 'use strict'
 
-// Debugger 
-
-let opcodes = [
-	"LIT", "INC", "POP", "DUP", "NIP", "SWP", "OVR", "ROT",
-	"EQU", "NEQ", "GTH", "LTH", "JMP", "JCN", "JSR", "STH",
-	"LDZ", "STZ", "LDR", "STR", "LDA", "STA", "DEI", "DEO",
-	"ADD", "SUB", "MUL", "DIV", "AND", "ORA", "EOR", "SFT",
-	"BRK"]
-
-function getname(byte) {
-
-	return opcodes[byte & 0x1f] + (!!(byte & 0x20) ? "2" : "") + (!!(byte & 0x40) ? "r" : "") + (!!(byte & 0x80) ? "k" : "")
-
-}
-
-// Core
-
 function Stack(u) {
 
 	this.mem = new Uint8Array(0xfe)
@@ -48,9 +31,10 @@ function Stack(u) {
 	}
 }
 
-function Uxn () {
+function Uxn (emu) {
 
 	let buffer = ""
+	this.emu = emu
 	this.ram = new Uint8Array(0x10000)
 	this.wst = new Stack(this)
 	this.rst = new Stack(this)
@@ -68,18 +52,8 @@ function Uxn () {
 	this.poke16 = (x, y) => { this.ram[x] = y >> 8; this.ram[x + 1] = y; }
 	this.jump8 = (addr, pc) => { return pc + (addr > 0x80 ? addr - 256 : addr); }
 	this.jump16 = (addr, pc) => { return addr; }
-	this.devw = (port, val) => { 
-		if(port == 0x18) {
-			if(val == 0x0a){
-				console.log(buffer)
-				buffer = ""
-			}
-			else{
-				buffer += String.fromCharCode(val)
-			}
-		}
-	}
-	this.devr = (port) => { return 0x00 }
+	this.devw = (port, val) => { this.emu.deo(port, val) }
+	this.devr = (port) => { return this.emu.dei(port)  }
 
 	this.load = (program) => {
 		for (let i = 0; i <= program.length; i++)
@@ -92,7 +66,7 @@ function Uxn () {
 		if(!pc || this.dev[0x0f])
 			return 0;
 		while((instr = this.ram[pc++])){
-			// console.log(getname(instr), pc, instr)
+			this.emu.onStep(pc, instr)
 			/* return */
 			if(instr & 0x40){
 				this.src = this.rst;
