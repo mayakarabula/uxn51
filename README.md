@@ -13,7 +13,7 @@ The first parameter is the rom file, the subsequent arguments will be accessible
 ## Devices
 
 - `00` system(missing)
-- `10` console(missing)
+- `10` console(partial)
 - `20` screen(missing)
 - `30` audio(missing)
 - `70` midi(missing)
