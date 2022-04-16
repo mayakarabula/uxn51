@@ -9,9 +9,8 @@
 <body>
 <script type="text/javascript">
 	'use strict'
-	const uxn = new Uxn(new Emu())
-	uxn.load(program).eval(0x0100)
-	console.log(uxn.wst.mem)
+	const emu = new Emu()
+	emu.load(program).eval(0x0100)
 </script>
 </body>
 </html> 

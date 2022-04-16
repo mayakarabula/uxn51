@@ -3,6 +3,7 @@
 |0000
 
 	@id $1
+	@sum $1
 
 |0100
 
@@ -97,7 +98,11 @@
 	#ffff #2a SFT2 [ #00fc ] ;res2 JSR2
 	#ffff #e3 SFT2 [ #c000 ] ;res2 JSR2
 
-	#0a18 DEO #0a18 DEO #010f DEO
+	#0a18 DEO #0a18 DEO 
+
+	.sum LDZ ;print/byte JSR2 LIT '/ #18 DEO .id LDZ ;print/byte JSR2 #0a18 DEO 
+
+	#010f DEO
 
 BRK
 
@@ -111,6 +116,7 @@ BRK
 
 @res ( pass -- )
 
+	.sum LDZ OVR ADD .sum STZ
 	.id LDZ 
 		DUP #07 AND ,&no-lb JCN #0a18 DEO &no-lb 
 		INCk .id STZ 
