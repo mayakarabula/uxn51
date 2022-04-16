@@ -44,13 +44,13 @@ function Uxn () {
 
 	this.pop8 = () => { return this.src.pop8() }
 	this.pop16 = () => { return this.src.pop16() }
-	this.push8 = (a) => { this.src.push8(a) }
-	this.push16 = (a) => { this.src.push16(a) }
-	this.peek8 = (a) => { return this.ram[a] }
-	this.peek16 = (a) => { return (this.ram[a] << 8) + this.ram[a + 1]; }
-	this.poke8 = (x,y) => { this.ram[x] = y; }
-	this.poke16 = (a) => { this.ram[x] = y >> 8; this.ram[x + 1] = y; }
-	this.jump8 = (addr, pc) => { return pc + (addr > 0x80 ? addr-256 : addr); }
+	this.push8 = (x) => { this.src.push8(x) }
+	this.push16 = (x) => { this.src.push16(x) }
+	this.peek8 = (x) => { return this.ram[x] }
+	this.peek16 = (x) => { return (this.ram[x] << 8) + this.ram[x + 1]; }
+	this.poke8 = (x, y) => { this.ram[x] = y; }
+	this.poke16 = (x, y) => { this.ram[x] = y >> 8; this.ram[x + 1] = y; }
+	this.jump8 = (addr, pc) => { return pc + (addr > 0x80 ? addr - 256 : addr); }
 	this.jump16 = (addr, pc) => { return addr; }
 	this.devw = (port, val) => { if(port == 0x18) console.log(String.fromCharCode(val)) }
 	this.devr = (port) => { return 0x00 }
