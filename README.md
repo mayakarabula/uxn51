@@ -33,7 +33,7 @@ uxnasm etc/tests.tal bin/tests.rom && uxncli bin/tests.rom
 Format tests for Javascript:
 
 ```sh
-uxnasm etc/format.tal bin/format.rom && uxncli bin/format.rom bin/tests.rom
+uxnasm etc/format.tal bin/format.rom && uxncli bin/format.rom bin/tests.rom > etc/program.js
 ```
 
 ## Need a hand?

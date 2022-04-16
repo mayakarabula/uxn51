@@ -25,6 +25,7 @@ BRK
 	POP
 	STH2r .File/name DEO2
 	#0001 .File/length DEO2
+	;header-txt ;print-str JSR2
 	LIT2r 0000
 	&stream
 		#00 ,&buf STR
@@ -35,10 +36,11 @@ BRK
 		INC2r
 		( linebreak )
 		STH2kr #0007 AND2 ORA ,&no-lb JCN
-			#0a18 DEO
+			#0a18 DEO #0918 DEO
 			&no-lb
 		.File/success DEI2 ORA ,&stream JCN
 	POP2r
+	;footer-txt ;print-str JSR2
 	#0a18 DEO
 	#010f DEO
 
@@ -66,3 +68,15 @@ JMP2r
 	&char ( char -- ) #0f AND DUP #09 GTH #27 MUL ADD #30 ADD #18 DEO
 
 JMP2r
+
+@print-str ( str* -- )
+
+	&while
+		LDAk #18 DEO
+		INC2 LDAk ,&while JCN
+	POP2
+
+JMP2r
+
+@header-txt "const 20 "program 20 "= 20 "new 20 "Uint8Array([ 0a 09 00
+@footer-txt "0x00]) 00
