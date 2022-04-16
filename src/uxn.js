@@ -9,13 +9,13 @@ function Stack(u) {
 
 	this.pop8 = () => {
 		if(this.ptr == 0x00) return this.u.halt(1)
-		if(this.u.keep) return this.mem[this.ptr-1]
+		if(this.u.reg.mk) return this.mem[this.ptr-1]
 		return this.mem[--this.ptr]
 	}
 
 	this.pop16 = () => {
 		if(this.ptr < 0x02) return this.u.halt(1)
-		if(this.u.keep) return this.mem[this.ptr-1] + (this.mem[this.ptr-2] << 8)
+		if(this.u.reg.mk) return this.mem[this.ptr-1] + (this.mem[this.ptr-2] << 8)
 		return this.mem[--this.ptr] + (this.mem[--this.ptr] << 8);
 	}
 
@@ -39,6 +39,7 @@ function Uxn (emu) {
 	this.wst = new Stack(this)
 	this.rst = new Stack(this)
 	this.dev = new Uint8Array(0x100)
+	this.reg = { m2: 0, mr: 0, mk: 0 }
 
 	/* microcode */
 
@@ -50,10 +51,12 @@ function Uxn (emu) {
 	this.peek16 = (x) => { return (this.ram[x] << 8) + this.ram[x + 1]; }
 	this.poke8 = (x, y) => { this.ram[x] = y; }
 	this.poke16 = (x, y) => { this.ram[x] = y >> 8; this.ram[x + 1] = y; }
-	this.jump8 = (addr, pc) => { return pc + (addr > 0x80 ? addr - 256 : addr); }
-	this.jump16 = (addr, pc) => { return addr; }
 	this.devw = (port, val) => { this.emu.deo(port, val) }
 	this.devr = (port) => { return this.emu.dei(port)  }
+
+	this.jump = (addr, pc) => {
+		return this.reg.m2 ? addr : pc + (addr > 0x80 ? addr - 256 : addr);
+	}
 
 	this.load = (program) => {
 		for (let i = 0; i <= program.length; i++)
@@ -67,35 +70,33 @@ function Uxn (emu) {
 			return 0;
 		while((instr = this.ram[pc++])){
 			this.emu.onStep(pc, instr)
+			/* registers */
+			this.reg.m2 = instr & 0x20
+			this.reg.mr = instr & 0x40
+			this.reg.mk = instr & 0x80
 			/* return */
-			if(instr & 0x40){
+			if(this.reg.mr){
 				this.src = this.rst;
 				this.dst = this.wst;
 			} else {
 				this.src = this.wst;
 				this.dst = this.rst;
 			}
-			/* keep */
-			this.keep = instr & 0x80
 			/* Short Mode */
-			if(instr & 0x20){
+			if(this.reg.m2){
 				this.pop = this.pop16;
 				this.push = this.push16;
 				this.peek = this.peek16;
 				this.poke = this.poke16;
-				this.jump = this.jump16;
 			} else {
 				this.pop = this.pop8;
 				this.push = this.push8;
 				this.peek = this.peek8;
 				this.poke = this.poke8;
-				this.jump = this.jump8;
 			}
 			switch(instr & 0x1f) {
 			/* Stack */
-			case 0x00: /* LIT */
-				if(instr & 0x20) { a = this.peek16(pc); this.push16(a); pc += 2; }
-				else { a = this.ram[pc]; this.push8(a); pc++; } break;
+			case 0x00: /* LIT */ this.push(this.peek(pc)); pc += !!this.reg.m2 + 1; break;
 			case 0x01: /* INC */ this.push(this.pop() + 1); break;
 			case 0x02: /* POP */ this.pop(); break;
 			case 0x03: /* DUP */ a = this.pop(); this.push(a); this.push(a); break;

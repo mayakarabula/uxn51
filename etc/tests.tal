@@ -6,7 +6,7 @@
 
 |0100
 
-	( arithmetic )
+	( ADD )
 	#0000 #0000 ADD2 [ #0000 ] ;res2 JSR2
 	#ffff #0000 ADD2 [ #ffff ] ;res2 JSR2
 	#ffff #0001 ADD2 [ #0000 ] ;res2 JSR2
@@ -18,6 +18,9 @@
 	#01 #ff ADD [ #00 ] ;res1 JSR2
 	#ff #ff ADD [ #fe ] ;res1 JSR2
 	#fe #ff ADD [ #fd ] ;res1 JSR2
+	#12 #34 ADDk ADD ADD [ #8c ] ;res1 JSR2
+	#1234 #5678 ADD2k ADD2 ADD2 [ #d158 ] ;res2 JSR2
+	( SUB )
 	#1337 #ae40 SUB2 [ #64f7 ] ;res2 JSR2
 	#ae40 #1337 SUB2 [ #9b09 ] ;res2 JSR2
 	#ffff #0000 SUB2 [ #ffff ] ;res2 JSR2
@@ -30,12 +33,18 @@
 	#01 #ff SUB [ #02 ] ;res1 JSR2
 	#ff #ff SUB [ #00 ] ;res1 JSR2
 	#fe #ff SUB [ #ff ] ;res1 JSR2
+	#12 #34 SUBk SUB SUB [ #bc ] ;res1 JSR2
+	#1234 #5678 SUB2k SUB2 SUB2 [ #7778 ] ;res2 JSR2
+	( MUL )
 	#00 #01 MUL [ #00 ] ;res1 JSR2
 	#3f #e7 MUL [ #d9 ] ;res1 JSR2
 	#37 #3f MUL [ #89 ] ;res1 JSR2
 	#10 #02 MUL [ #20 ] ;res1 JSR2
 	#ff #00 MUL [ #00 ] ;res1 JSR2
 	#ff #02 MUL [ #fe ] ;res1 JSR2
+	#12 #34 MULk MUL MUL [ #40 ] ;res1 JSR2
+	#1234 #5678 MUL2k MUL2 MUL2 [ #2400 ] ;res2 JSR2
+	( TODO DIV )
 	( TODO AND )
 	( TODO ORA )
 	#00 #00 EOR [ #00 ] ;res1 JSR2
