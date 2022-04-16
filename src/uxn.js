@@ -2,32 +2,33 @@
 
 function Stack(u) {
 
-	this.u = u
 	this.mem = new Uint8Array(0xfe)
 	this.ptr = 0
-	this.keep = 0
+	this.err = 0
+	this.u = u
 
 	this.pop8 = () => {
-		if(this.u.keep)
-			return this.mem[this.ptr-1]
+		if(this.ptr == 0x00) return this.u.halt(1)
+		if(this.u.keep) return this.mem[this.ptr-1]
 		return this.mem[--this.ptr]
 	}
 
-	this.push8 = (val) => {
-		this.mem[this.ptr++] = val
-	}
-
 	this.pop16 = () => {
-		if(this.u.keep)
-			return this.mem[this.ptr-1] + (this.mem[this.ptr-2] << 8)
+		if(this.ptr < 0x02) return this.u.halt(1)
+		if(this.u.keep) return this.mem[this.ptr-1] + (this.mem[this.ptr-2] << 8)
 		return this.mem[--this.ptr] + (this.mem[--this.ptr] << 8);
 	}
 
+	this.push8 = (val) => {
+		if(this.ptr == 0xff) return this.u.halt(2)
+		this.mem[this.ptr++] = val
+	}
+
 	this.push16 = (val) => {
+		if(this.ptr > 0xfe) return this.u.halt(2)
 		this.mem[this.ptr++] = val >> 0x08
 		this.mem[this.ptr++] = val & 0xff
 	}
-
 }
 
 function Uxn () {
@@ -36,9 +37,6 @@ function Uxn () {
 	this.wst = new Stack(this)
 	this.rst = new Stack(this)
 	this.dev = new Uint8Array(0x100)
-	this.src = this.wst
-	this.dst = this.rst
-	this.keep = 0
 
 	/* microcode */
 
@@ -112,14 +110,14 @@ function Uxn () {
 			case 0x0e: /* JSR */ a = this.pop(); this.dst.push16(pc); pc = this.jump(a, pc); break;
 			case 0x0f: /* STH */ a = this.pop(); this.dst.push16(a); break;
 			/* Memory */
-			case 0x10: /* LDZ */ a = this.pop8(); b = this.peek(a); this.push(b); break;
-			case 0x11: /* STZ */ a = this.pop8(); b = this.pop(); this.poke(a, b); break;
-			case 0x12: /* LDR */ a = this.pop8(); this.peek(b, pc + a); this.push(b); break;
-			case 0x13: /* STR */ a = this.pop8(); b = this.pop(); c = pc + a; this.poke(c, b); break;
-			case 0x14: /* LDA */ a = this.pop16(); b = this.peek(a); this.push(b); break;
-			case 0x15: /* STA */ a = this.pop16(); b = this.pop(); this.poke(a, b); break;
-			case 0x16: /* DEI */ a = this.pop8(); b = this.devr(a); this.push(b); break;
-			case 0x17: /* DEO */ a = this.pop8(); b = this.pop(); this.devw(a, b); break;
+			case 0x10: /* LDZ */ this.push(this.peek(this.pop8())); break;
+			case 0x11: /* STZ */ this.poke(this.pop8(), this.pop()); break;
+			case 0x12: /* LDR */ this.push(this.peek(pc + this.pop8())); break;
+			case 0x13: /* STR */ this.poke(pc + this.pop8(), this.pop()); break;
+			case 0x14: /* LDA */ this.push(this.peek(this.pop16())); break;
+			case 0x15: /* STA */ this.poke(this.pop16(), this.pop()); break;
+			case 0x16: /* DEI */ this.push(this.devr(this.pop8())); break;
+			case 0x17: /* DEO */ this.devw(this.pop8(), this.pop()); break;
 			/* Arithmetic */
 			case 0x18: /* ADD */ a = this.pop(); b = this.pop(); this.push(b + a); break;
 			case 0x19: /* SUB */ a = this.pop(); b = this.pop(); this.push(b - a); break;
@@ -133,7 +131,8 @@ function Uxn () {
 		}
 	}
 
-	this.halt = (instr, err, addr) => {
-		// TODO
+	this.halt = (err) => {
+		console.warn("Halt", err)
+		this.pc = 0x0000
 	}
 }
