@@ -50,6 +50,7 @@ function Stack(u) {
 
 function Uxn () {
 
+	let buffer = ""
 	this.ram = new Uint8Array(0x10000)
 	this.wst = new Stack(this)
 	this.rst = new Stack(this)
@@ -67,7 +68,17 @@ function Uxn () {
 	this.poke16 = (x, y) => { this.ram[x] = y >> 8; this.ram[x + 1] = y; }
 	this.jump8 = (addr, pc) => { return pc + (addr > 0x80 ? addr - 256 : addr); }
 	this.jump16 = (addr, pc) => { return addr; }
-	this.devw = (port, val) => { if(port == 0x18) console.log(String.fromCharCode(val)) }
+	this.devw = (port, val) => { 
+		if(port == 0x18) {
+			if(val == 0x0a){
+				console.log(buffer)
+				buffer = ""
+			}
+			else{
+				buffer += String.fromCharCode(val)
+			}
+		}
+	}
 	this.devr = (port) => { return 0x00 }
 
 	this.load = (program) => {
@@ -80,7 +91,7 @@ function Uxn () {
 		if(!pc || this.dev[0x0f])
 			return 0;
 		while((instr = this.ram[pc++])){
-			console.log(getname(instr), pc, instr)
+			// console.log(getname(instr), pc, instr)
 			/* return */
 			if(instr & 0x40){
 				this.src = this.rst;
@@ -118,10 +129,10 @@ function Uxn () {
 			case 0x06: /* OVR */ a = this.pop(); b = this.pop(); this.push(b); this.push(a); this.push(b); break;
 			case 0x07: /* ROT */ a = this.pop(); b = this.pop(); c = this.pop(); this.push(b); this.push(a); this.push(c); break;
 			/* Logic */
-			case 0x08: /* EQU */ a = this.pop(); b = this.pop(); this.push8(src, b == a); break;
-			case 0x09: /* NEQ */ a = this.pop(); b = this.pop(); this.push8(src, b != a); break;
-			case 0x0a: /* GTH */ a = this.pop(); b = this.pop(); this.push8(src, b > a); break;
-			case 0x0b: /* LTH */ a = this.pop(); b = this.pop(); this.push8(src, b < a); break;
+			case 0x08: /* EQU */ a = this.pop(); b = this.pop(); this.push8(b == a); break;
+			case 0x09: /* NEQ */ a = this.pop(); b = this.pop(); this.push8(b != a); break;
+			case 0x0a: /* GTH */ a = this.pop(); b = this.pop(); this.push8(b > a); break;
+			case 0x0b: /* LTH */ a = this.pop(); b = this.pop(); this.push8(b < a); break;
 			case 0x0c: /* JMP */ pc = this.jump(this.pop(), pc); break;
 			case 0x0d: /* JCN */ a = this.pop(); if(this.pop()) pc = this.jump(a, pc); break;
 			case 0x0e: /* JSR */ this.dst.push16(pc); pc = this.jump(this.pop(), pc); break;
