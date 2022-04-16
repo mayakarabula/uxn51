@@ -9,8 +9,7 @@
 <script type="text/javascript">
 	'use strict'
 	const uxn = new Uxn()
-	uxn.load(program)
-	uxn.eval(0x0100)
+	uxn.load(program).eval(0x0100)
 	console.log(uxn.wst.mem)
 </script>
 </body>

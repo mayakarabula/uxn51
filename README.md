@@ -4,10 +4,19 @@ An emulator for the [Uxn stack-machine](https://wiki.xxiivv.com/site/uxn.html), 
 
 ## Usage
 
-The first parameter is the rom file, the subsequent arguments will be accessible to the rom, via the [Console vector](https://wiki.xxiivv.com/site/varvara.html#console).
+Include the uxn core in your `<head>` tag:
 
 ```html
 <script src="src/uxn.js"></script>
+```
+
+Include the boot sequence in your website, and evaluate a program:
+
+```html
+<script type="text/javascript">
+	const uxn = new Uxn()
+	uxn.load(program).eval(0x0100)
+</script>
 ```
 
 ## Devices
