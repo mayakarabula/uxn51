@@ -1,4 +1,4 @@
-( test uxnVM operations )
+( a little script to test operators )
 
 |0000
 
@@ -6,6 +6,59 @@
 	@sum $1
 
 |0100
+
+	( INC )
+	#0000 INC2 [ #0001 ] ;res2 JSR2
+	#0001 INC2 [ #0002 ] ;res2 JSR2
+	#ffff INC2 [ #0000 ] ;res2 JSR2
+	#00 INC [ #01 ] ;res1 JSR2
+	#01 INC [ #02 ] ;res1 JSR2
+	#ff INC [ #00 ] ;res1 JSR2
+
+	( Logic )
+
+	( EQU )
+	#0000 #0000 EQU2 [ #01 ] ;res1 JSR2
+	#0001 #0001 EQU2 [ #01 ] ;res1 JSR2
+	#0000 #0001 EQU2 [ #00 ] ;res1 JSR2
+	#0001 #0000 EQU2 [ #00 ] ;res1 JSR2
+	#00 #00 EQU [ #01 ] ;res1 JSR2
+	#01 #01 EQU [ #01 ] ;res1 JSR2
+	#00 #01 EQU [ #00 ] ;res1 JSR2
+	#01 #00 EQU [ #00 ] ;res1 JSR2
+	( NEQ )
+	#0000 #0000 NEQ2 [ #00 ] ;res1 JSR2
+	#0001 #0001 NEQ2 [ #00 ] ;res1 JSR2
+	#0000 #0001 NEQ2 [ #01 ] ;res1 JSR2
+	#0001 #0000 NEQ2 [ #01 ] ;res1 JSR2
+	#00 #00 NEQ [ #00 ] ;res1 JSR2
+	#01 #01 NEQ [ #00 ] ;res1 JSR2
+	#00 #01 NEQ [ #01 ] ;res1 JSR2
+	#01 #00 NEQ [ #01 ] ;res1 JSR2
+	( GTH )
+	#0002 #0001 GTH2 [ #01 ] ;res1 JSR2
+	#0000 #ffff GTH2 [ #00 ] ;res1 JSR2
+	#ffff #0000 GTH2 [ #01 ] ;res1 JSR2
+	#0001 #ffff GTH2 [ #00 ] ;res1 JSR2
+	#ffff #0001 GTH2 [ #01 ] ;res1 JSR2
+	#02 #01 GTH [ #01 ] ;res1 JSR2
+	#00 #ff GTH [ #00 ] ;res1 JSR2
+	#ff #00 GTH [ #01 ] ;res1 JSR2
+	#01 #ff GTH [ #00 ] ;res1 JSR2
+	#ff #01 GTH [ #01 ] ;res1 JSR2
+	( LTH )
+	#0002 #0001 LTH2 [ #00 ] ;res1 JSR2
+	#0000 #ffff LTH2 [ #01 ] ;res1 JSR2
+	#ffff #0000 LTH2 [ #00 ] ;res1 JSR2
+	#0001 #ffff LTH2 [ #01 ] ;res1 JSR2
+	#ffff #0001 LTH2 [ #00 ] ;res1 JSR2
+	#02 #01 LTH [ #00 ] ;res1 JSR2
+	#00 #ff LTH [ #01 ] ;res1 JSR2
+	#ff #00 LTH [ #00 ] ;res1 JSR2
+	#01 #ff LTH [ #01 ] ;res1 JSR2
+	#ff #01 LTH [ #00 ] ;res1 JSR2
+
+	( Arithmetic )
 
 	( ADD )
 	#0000 #0000 ADD2 [ #0000 ] ;res2 JSR2
@@ -45,15 +98,23 @@
 	#ff #02 MUL [ #fe ] ;res1 JSR2
 	#12 #34 MULk MUL MUL [ #40 ] ;res1 JSR2
 	#1234 #5678 MUL2k MUL2 MUL2 [ #2400 ] ;res2 JSR2
-	( TODO DIV )
-	( TODO AND )
-	( TODO ORA )
+	( DIV )
+	#10 #02 DIV [ #08 ] ;res1 JSR2
+	#1000 #0040 DIV2 [ #0040 ] ;res2 JSR2
+	( AND )
+	#fc #3f AND [ #3c ] ;res1 JSR2
+	#f0 #0f AND [ #00 ] ;res1 JSR2
+	#ff #3c AND [ #3c ] ;res1 JSR2
+	( ORA )
+	#0f #f0 ORA [ #ff ] ;res1 JSR2
+	( EOR )
 	#00 #00 EOR [ #00 ] ;res1 JSR2
 	#ff #00 EOR [ #ff ] ;res1 JSR2
 	#aa #55 EOR [ #ff ] ;res1 JSR2
 	#ff #ff EOR [ #00 ] ;res1 JSR2
 	#ffff #ff00 EOR2 [ #00ff ] ;res2 JSR2
 	#aaaa #5555 EOR2 [ #ffff ] ;res2 JSR2
+	( SFT )
 	#ff #00 SFT [ #ff ] ;res1 JSR2
 	#ff #01 SFT [ #7f ] ;res1 JSR2
 	#ff #07 SFT [ #01 ] ;res1 JSR2
