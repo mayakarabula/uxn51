@@ -36,6 +36,7 @@ function Stack(u) {
 	}
 }
 
+
 function Uxn (emu) {
 
 	this.emu = emu
@@ -56,7 +57,7 @@ function Uxn (emu) {
 	this.poke = (addr, val) => { if(this.r2) { this.ram[addr] = val >> 8; this.ram[addr + 1] = val; } else this.ram[addr] = val }
 	this.devr = (port) => { return this.emu.dei(port) }
 	this.devw = (port, val) => { this.emu.deo(port, val) }
-	this.jump = (addr, pc) => { return this.r2 ? addr : pc + (addr > 0x80 ? addr - 256 : addr); }
+	this.jump = (addr, pc) => { return this.r2 ? addr : pc + rel(addr); }
 
 	this.eval = (pc) => {
 		let a, b, c, instr
@@ -94,8 +95,8 @@ function Uxn (emu) {
 			/* Memory */
 			case 0x10: /* LDZ */ this.push(this.peek(this.pop8())); break;
 			case 0x11: /* STZ */ this.poke(this.pop8(), this.pop()); break;
-			case 0x12: /* LDR */ this.push(this.peek(pc + this.pop8())); break;
-			case 0x13: /* STR */ this.poke(pc + this.pop8(), this.pop()); break;
+			case 0x12: /* LDR */ this.push(this.peek(pc + rel(this.pop8()))); break;
+			case 0x13: /* STR */ this.poke(pc + rel(this.pop8()), this.pop()); break;
 			case 0x14: /* LDA */ this.push(this.peek(this.pop16())); break;
 			case 0x15: /* STA */ this.poke(this.pop16(), this.pop()); break;
 			case 0x16: /* DEI */ this.push(this.devr(this.pop8())); break;
@@ -113,8 +114,18 @@ function Uxn (emu) {
 		}
 	}
 
+	this.load = (program) => {
+		for (let i = 0; i <= program.length; i++)
+			this.ram[0x100 + i] = program[i];
+		return this
+	}
+
 	this.halt = (err) => {
 		console.warn("Halt", err)
 		this.pc = 0x0000
+	}
+	
+	function rel(val) {
+		return (val > 0x80 ? val - 256 : val)
 	}
 }

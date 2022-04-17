@@ -4,8 +4,11 @@
 
 	@id $1
 	@sum $1
+	@zeropage &byte $1 &short $2
 
 |0100
+
+	( Stack )
 
 	( INC )
 	#0000 INC2 [ #0001 ] ;res2 JSR2
@@ -14,6 +17,23 @@
 	#00 INC [ #01 ] ;res1 JSR2
 	#01 INC [ #02 ] ;res1 JSR2
 	#ff INC [ #00 ] ;res1 JSR2
+	#03 INCk ADD [ #07 ] ;res1 JSR2
+	( POP )
+	#02 #03 POP [ #02 ] ;res1 JSR2
+	#02 POPk [ #02 ] ;res1 JSR2
+	( DUP )
+	#02 DUP ADD [ #04 ] ;res1 JSR2
+	#02 DUPk ADD ADD [ #06 ] ;res1 JSR2
+	( NIP )
+	#01 #02 #03 NIP ADD [ #04 ] ;res1 JSR2
+	#12 #34 NIPk ADD ADD [ #7a ] ;res1 JSR2
+	( SWP )
+	#02 #10 SWP DIV [ #08 ] ;res1 JSR2
+	#02 #10 SWPk ADD2 MUL [ #44 ] ;res1 JSR2
+	( OVR )
+	#02 #10 OVR DIV ADD [ #0a ] ;res1 JSR2
+	( ROT ) 
+	#02 #04 #10 ROT DIV ADD [ #0c ] ;res1 JSR2
 
 	( Logic )
 
@@ -57,6 +77,32 @@
 	#ff #00 LTH [ #00 ] ;res1 JSR2
 	#01 #ff LTH [ #01 ] ;res1 JSR2
 	#ff #01 LTH [ #00 ] ;res1 JSR2
+
+	( JMP )
+	( JCN )
+	( JSR )
+	( STH )
+
+	( Memory )
+
+	( STZ/LDZ )
+	#ab .zeropage/byte STZ .zeropage/byte LDZ [ #ab ] ;res1 JSR2
+	#1234 .zeropage/short STZ2 .zeropage/short LDZ2 [ #1234 ] ;res2 JSR2
+	( STR/LDR )
+	[ LIT &before1 $1 ] POP
+	[ LIT2 &before2 $2 ] POP2
+	#22 ,&before1 STR ,&before1 LDR [ #22 ] ;res1 JSR2
+	#1234 ,&before2 STR2 ,&before2 LDR2 [ #1234 ] ;res2 JSR2
+	#ef ,&after1 STR ,&after1 LDR [ #ef ] ;res1 JSR2
+	#5678 ,&after2 STR2 ,&after2 LDR2 [ #5678 ] ;res2 JSR2
+	[ LIT &after1 $1 ] POP
+	[ LIT2 &after2 $2 ] POP2
+	( STA/LDA )
+	#34 ;absolute/byte STA ;absolute/byte LDA [ #34 ] ;res1 JSR2
+	#1234 ;absolute/short STA2 ;absolute/short LDA2 [ #1234 ] ;res2 JSR2
+
+	( DEI )
+	( DEO )
 
 	( Arithmetic )
 
@@ -206,3 +252,4 @@ JMP2r
 JMP2r
 
 @msg :&fail :&pass &pass "pass $1 &fail "fail $1
+@absolute &byte $1 &short $2

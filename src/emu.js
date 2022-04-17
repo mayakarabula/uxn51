@@ -20,16 +20,6 @@ function Emu () {
 		return opcodes[byte & 0x1f] + m2 + mk + mr
 	}
 
-	this.load = (program) => {
-		for (let i = 0; i <= program.length; i++)
-			this.uxn.ram[0x100 + i] = program[i];
-		return this
-	}
-
-	this.eval = (addr) => {
-		this.uxn.eval(addr)
-	}
-
 	this.onStep = (pc, instr) => {
 		// console.log(getname(instr), pc)
 	}
