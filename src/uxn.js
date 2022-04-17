@@ -39,21 +39,19 @@ function Uxn (emu) {
 	this.rst = new Stack(this)
 	this.dev = new Uint8Array(0x100)
 
-	/* microcode */
-
 	this.src = () => { return this.rr ? this.rst : this.wst }
 	this.dst = () => { return this.rr ? this.wst : this.rst }
 	this.pop8 = () => { return this.src().pop8() }
 	this.pop16 = () => { return this.src().pop16() }
+	this.pop = () => { return this.r2 ? this.pop16() : this.pop8() }
 	this.push8 = (x) => { this.src().push8(x) }
 	this.push16 = (x) => { this.src().push16(x) }
 	this.push = (val) => { if(this.r2) { this.push16(val) } else this.push8(val) }
-	this.pop = () => { return this.r2 ? this.pop16() : this.pop8() }
-	this.poke = (addr, val) => { if(this.r2) { this.ram[addr] = val >> 8; this.ram[addr + 1] = val; } else this.ram[addr] = val }
 	this.peek = (addr) => { return this.r2 ? (this.ram[addr] << 8) + this.ram[addr + 1] : this.ram[addr] }
-	this.jump = (addr, pc) => { return this.r2 ? addr : pc + (addr > 0x80 ? addr - 256 : addr); }
-	this.devw = (port, val) => { this.emu.deo(port, val) }
+	this.poke = (addr, val) => { if(this.r2) { this.ram[addr] = val >> 8; this.ram[addr + 1] = val; } else this.ram[addr] = val }
 	this.devr = (port) => { return this.emu.dei(port) }
+	this.devw = (port, val) => { this.emu.deo(port, val) }
+	this.jump = (addr, pc) => { return this.r2 ? addr : pc + (addr > 0x80 ? addr - 256 : addr); }
 
 	this.eval = (pc) => {
 		let a, b, c, instr
@@ -65,6 +63,10 @@ function Uxn (emu) {
 			this.r2 = instr & 0x20
 			this.rr = instr & 0x40
 			this.rk = instr & 0x80
+
+
+
+
 			switch(instr & 0x1f) {
 			/* Stack */
 			case 0x00: /* LIT */ this.push(this.peek(pc)); pc += !!this.r2 + 1; break;
