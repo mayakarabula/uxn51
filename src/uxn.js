@@ -89,7 +89,7 @@ function Uxn (emu) {
 			case 0x0a: /* GTH */ a = this.pop(); b = this.pop(); this.push8(b > a); break;
 			case 0x0b: /* LTH */ a = this.pop(); b = this.pop(); this.push8(b < a); break;
 			case 0x0c: /* JMP */ pc = this.jump(this.pop(), pc); break;
-			case 0x0d: /* JCN */ a = this.pop(); if(this.pop()) pc = this.jump(a, pc); break;
+			case 0x0d: /* JCN */ a = this.pop(); if(this.pop8()) pc = this.jump(a, pc); break;
 			case 0x0e: /* JSR */ this.dst().push16(pc); pc = this.jump(this.pop(), pc); break;
 			case 0x0f: /* STH */ this.dst().push16(this.pop()); break;
 			/* Memory */

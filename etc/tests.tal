@@ -32,7 +32,7 @@
 	#02 #10 SWPk ADD2 MUL [ #44 ] ;res1 JSR2
 	( OVR )
 	#02 #10 OVR DIV ADD [ #0a ] ;res1 JSR2
-	( ROT ) 
+	( ROT )
 	#02 #04 #10 ROT DIV ADD [ #0c ] ;res1 JSR2
 
 	( Logic )
@@ -77,32 +77,6 @@
 	#ff #00 LTH [ #00 ] ;res1 JSR2
 	#01 #ff LTH [ #01 ] ;res1 JSR2
 	#ff #01 LTH [ #00 ] ;res1 JSR2
-
-	( JMP )
-	( JCN )
-	( JSR )
-	( STH )
-
-	( Memory )
-
-	( STZ/LDZ )
-	#ab .zeropage/byte STZ .zeropage/byte LDZ [ #ab ] ;res1 JSR2
-	#1234 .zeropage/short STZ2 .zeropage/short LDZ2 [ #1234 ] ;res2 JSR2
-	( STR/LDR )
-	[ LIT &before1 $1 ] POP
-	[ LIT2 &before2 $2 ] POP2
-	#22 ,&before1 STR ,&before1 LDR [ #22 ] ;res1 JSR2
-	#1234 ,&before2 STR2 ,&before2 LDR2 [ #1234 ] ;res2 JSR2
-	#ef ,&after1 STR ,&after1 LDR [ #ef ] ;res1 JSR2
-	#5678 ,&after2 STR2 ,&after2 LDR2 [ #5678 ] ;res2 JSR2
-	[ LIT &after1 $1 ] POP
-	[ LIT2 &after2 $2 ] POP2
-	( STA/LDA )
-	#34 ;absolute/byte STA ;absolute/byte LDA [ #34 ] ;res1 JSR2
-	#1234 ;absolute/short STA2 ;absolute/short LDA2 [ #1234 ] ;res2 JSR2
-	( DEO/DEI )
-	#01 #ff DEO #ff DEI [ #01 ] ;res1 JSR2
-	#1234 #fe DEO2 #fe DEI2 [ #1234 ] ;res2 JSR2
 
 	( Arithmetic )
 
@@ -205,9 +179,41 @@
 	#ffff #2a SFT2 [ #00fc ] ;res2 JSR2
 	#ffff #e3 SFT2 [ #c000 ] ;res2 JSR2
 
-	#0a18 DEO #0a18 DEO 
+	( Memory )
 
-	.sum LDZ ;print/byte JSR2 LIT '/ #18 DEO .id LDZ ;print/byte JSR2 #0a18 DEO 
+	( STZ/LDZ )
+	#ab .zeropage/byte STZ .zeropage/byte LDZ [ #ab ] ;res1 JSR2
+	#1234 .zeropage/short STZ2 .zeropage/short LDZ2 [ #1234 ] ;res2 JSR2
+	( STR/LDR )
+	[ LIT &before1 $1 ] POP
+	[ LIT2 &before2 $2 ] POP2
+	#22 ,&before1 STR ,&before1 LDR [ #22 ] ;res1 JSR2
+	#1234 ,&before2 STR2 ,&before2 LDR2 [ #1234 ] ;res2 JSR2
+	#ef ,&after1 STR ,&after1 LDR [ #ef ] ;res1 JSR2
+	#5678 ,&after2 STR2 ,&after2 LDR2 [ #5678 ] ;res2 JSR2
+	[ LIT &after1 $1 ] POP
+	[ LIT2 &after2 $2 ] POP2
+	( STA/LDA )
+	#34 ;absolute/byte STA ;absolute/byte LDA [ #34 ] ;res1 JSR2
+	#1234 ;absolute/short STA2 ;absolute/short LDA2 [ #1234 ] ;res2 JSR2
+	( DEO/DEI )
+	#01 #ff DEO #ff DEI [ #01 ] ;res1 JSR2
+	#1234 #fe DEO2 #fe DEI2 [ #1234 ] ;res2 JSR2
+
+	( JMP )
+	#12 #34 ,&reljmp JMP SWP &reljmp POP [ #12 ] ;res1 JSR2
+	#56 #78 ;&absjmp JMP2 SWP &absjmp POP [ #56 ] ;res1 JSR2
+	( JCN )
+	#23 #01 ,&reljcn-y JCN INC &reljcn-y [ #23 ] ;res1 JSR2
+	#23 #01 ;&absjcn-y JCN2 INC &absjcn-y [ #23 ] ;res1 JSR2
+	#23 #00 ,&reljcn-n JCN INC &reljcn-n [ #24 ] ;res1 JSR2
+	#23 #00 ;&absjcn-n JCN2 INC &absjcn-n [ #24 ] ;res1 JSR2
+	( STH )
+	#22 STH INCkr ADDr STHr [ #45 ] ;res1 JSR2
+
+	#0a18 DEO #0a18 DEO
+
+	.sum LDZ ;print/byte JSR2 LIT '/ #18 DEO .id LDZ ;print/byte JSR2 #0a18 DEO
 
 	#010f DEO
 
@@ -224,13 +230,13 @@ BRK
 @res ( pass -- )
 
 	.sum LDZ OVR ADD .sum STZ
-	.id LDZ 
-		DUP #07 AND ,&no-lb JCN #0a18 DEO &no-lb 
-		INCk .id STZ 
+	.id LDZ
+		DUP #07 AND ,&no-lb JCN #0a18 DEO &no-lb
+		INCk .id STZ
 		,print/byte JSR
 	#2018 DEO
 	#00 SWP #10 SFT ;msg ADD2 LDA2 ,print-str JSR
-	#2018 DEO 
+	#2018 DEO
 
 JMP2r
 
