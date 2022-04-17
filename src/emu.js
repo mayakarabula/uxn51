@@ -25,10 +25,11 @@ function Emu () {
 	}
 
 	this.dei = (port) => {
-
+		return this.uxn.dev[port]
 	}
 
 	this.deo = (port, val) => {
+		this.uxn.dev[port] = val
 		if(port == 0x18) {
 			if(val == 0x0a){
 				console.log(this.buffer)

@@ -55,8 +55,8 @@ function Uxn (emu) {
 	this.push = (val) => { if(this.r2) { this.push16(val) } else this.push8(val) }
 	this.peek = (addr) => { return this.r2 ? (this.ram[addr] << 8) + this.ram[addr + 1] : this.ram[addr] }
 	this.poke = (addr, val) => { if(this.r2) { this.ram[addr] = val >> 8; this.ram[addr + 1] = val; } else this.ram[addr] = val }
-	this.devr = (port) => { return this.emu.dei(port) }
-	this.devw = (port, val) => { this.emu.deo(port, val) }
+	this.devr = (port) => { return this.r2 ? (this.emu.dei(port) << 8) + this.emu.dei(port+1) : this.emu.dei(port) }
+	this.devw = (port, val) => { if(this.r2){ this.emu.deo(port, val >> 8); this.emu.deo(port+1, val & 0xff) } else this.emu.deo(port, val) }
 	this.jump = (addr, pc) => { return this.r2 ? addr : pc + rel(addr); }
 
 	this.eval = (pc) => {
@@ -124,7 +124,7 @@ function Uxn (emu) {
 		console.warn("Halt", err)
 		this.pc = 0x0000
 	}
-	
+
 	function rel(val) {
 		return (val > 0x80 ? val - 256 : val)
 	}

@@ -100,9 +100,9 @@
 	( STA/LDA )
 	#34 ;absolute/byte STA ;absolute/byte LDA [ #34 ] ;res1 JSR2
 	#1234 ;absolute/short STA2 ;absolute/short LDA2 [ #1234 ] ;res2 JSR2
-
-	( DEI )
-	( DEO )
+	( DEO/DEI )
+	#01 #ff DEO #ff DEI [ #01 ] ;res1 JSR2
+	#1234 #fe DEO2 #fe DEI2 [ #1234 ] ;res2 JSR2
 
 	( Arithmetic )
 
