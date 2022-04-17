@@ -1,0 +1,12 @@
+|0100 @program
+
+	;hello-word
+	&while
+		( send ) LDAk #18 DEO
+		( loop ) INC2 LDAk ,&while JCN
+	POP2
+	( halt ) #010f DEO
+
+BRK
+
+@hello-word "Hello 20 "World! 0a00

@@ -3,31 +3,36 @@
 function Stack(u) {
 
 	this.mem = new Uint8Array(0xfe)
-	this.ptr = 0
-	this.err = 0
+	this.p = 0
 	this.u = u
 
 	this.pop8 = () => {
-		if(this.ptr == 0x00) return this.u.halt(1)
-		if(this.u.rk) return this.mem[this.ptr-1]
-		return this.mem[--this.ptr]
+		if(this.p == 0x00) 
+			return this.u.halt(1)
+		if(this.u.rk)
+			return this.mem[--this.pk]
+		return this.mem[--this.p]
 	}
 
 	this.pop16 = () => {
-		if(this.ptr < 0x02) return this.u.halt(1)
-		if(this.u.rk) return this.mem[this.ptr-1] + (this.mem[this.ptr-2] << 8)
-		return this.mem[--this.ptr] + (this.mem[--this.ptr] << 8);
+		if(this.p < 0x02) 
+			return this.u.halt(1)
+		if(this.u.rk)
+			return this.mem[--this.pk] + (this.mem[--this.pk] << 8)
+		return this.mem[--this.p] + (this.mem[--this.p] << 8)
 	}
 
 	this.push8 = (val) => {
-		if(this.ptr == 0xff) return this.u.halt(2)
-		this.mem[this.ptr++] = val
+		if(this.p == 0xff) 
+			return this.u.halt(2)
+		this.mem[this.p++] = val
 	}
 
 	this.push16 = (val) => {
-		if(this.ptr > 0xfe) return this.u.halt(2)
-		this.mem[this.ptr++] = val >> 0x08
-		this.mem[this.ptr++] = val & 0xff
+		if(this.p > 0xfe) 
+			return this.u.halt(2)
+		this.mem[this.p++] = val >> 0x08
+		this.mem[this.p++] = val & 0xff
 	}
 }
 
@@ -63,10 +68,10 @@ function Uxn (emu) {
 			this.r2 = instr & 0x20
 			this.rr = instr & 0x40
 			this.rk = instr & 0x80
-
-
-
-
+			if(this.rk){
+				this.wst.pk = this.wst.p
+				this.rst.pk = this.rst.p
+			}
 			switch(instr & 0x1f) {
 			/* Stack */
 			case 0x00: /* LIT */ this.push(this.peek(pc)); pc += !!this.r2 + 1; break;
