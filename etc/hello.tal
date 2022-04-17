@@ -5,6 +5,10 @@
 		( send ) LDAk #18 DEO
 		( loop ) INC2 LDAk ,&while JCN
 	POP2
+
+	#12 DUP
+
+
 	( halt ) #010f DEO
 
 BRK

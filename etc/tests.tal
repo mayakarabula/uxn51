@@ -23,7 +23,6 @@
 	#02 POPk [ #02 ] ;res1 JSR2
 	( DUP )
 	#02 DUP ADD [ #04 ] ;res1 JSR2
-	#02 DUPk ADD ADD [ #06 ] ;res1 JSR2
 	( NIP )
 	#01 #02 #03 NIP ADD [ #04 ] ;res1 JSR2
 	#12 #34 NIPk ADD ADD [ #7a ] ;res1 JSR2

@@ -6,6 +6,14 @@ function Stack(u) {
 	this.p = 0
 	this.u = u
 
+	this.get8 = (id) => {
+		return this.mem[this.p-1-id]
+	}
+	
+	this.get16 = (id) => {
+		return this.mem[this.p-1-id] + (this.mem[this.p-2-id] << 8)
+	}
+
 	this.pop8 = () => {
 		if(this.p == 0x00) 
 			return this.u.halt(1)
@@ -59,6 +67,14 @@ function Uxn (emu) {
 	this.devw = (port, val) => { if(this.r2){ this.emu.deo(port, val >> 8); this.emu.deo(port+1, val & 0xff) } else this.emu.deo(port, val) }
 	this.jump = (addr, pc) => { return this.r2 ? addr : pc + rel(addr); }
 
+	/* microcode */
+
+	this.get = (n) => { return this.r2 ? this.src().get16(n) : this.src().get8(n) }
+
+	this.pick = (n) => { this.push(this.get(n)) }
+
+	this.roll = (n) => { }
+
 	this.eval = (pc) => {
 		let a, b, c, instr
 		if(!pc || this.dev[0x0f])
@@ -78,10 +94,10 @@ function Uxn (emu) {
 			case 0x00: /* LIT */ this.push(this.peek(pc)); pc += !!this.r2 + 1; break;
 			case 0x01: /* INC */ this.push(this.pop() + 1); break;
 			case 0x02: /* POP */ this.pop(); break;
-			case 0x03: /* DUP */ a = this.pop(); this.push(a); this.push(a); break;
+			case 0x03: /* DUP */ this.pick(0); break;
 			case 0x04: /* NIP */ a = this.pop(); this.pop(); this.push(a); break;
 			case 0x05: /* SWP */ a = this.pop(); b = this.pop(); this.push(a); this.push(b); break;
-			case 0x06: /* OVR */ a = this.pop(); b = this.pop(); this.push(b); this.push(a); this.push(b); break;
+			case 0x06: /* OVR */ this.pick(1); break;
 			case 0x07: /* ROT */ a = this.pop(); b = this.pop(); c = this.pop(); this.push(b); this.push(a); this.push(c); break;
 			/* Logic */
 			case 0x08: /* EQU */ a = this.pop(); b = this.pop(); this.push8(b == a); break;
