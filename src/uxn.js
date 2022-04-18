@@ -78,11 +78,11 @@ function Uxn (emu) {
 			case 0x00: /* LIT */ this.push(this.peek(pc)); pc += !!this.r2 + 1; break;
 			case 0x01: /* INC */ this.push(this.pop() + 1); break;
 			case 0x02: /* POP */ this.pop(); break;
-			case 0x03: /* DUP */ a = this.pop(); this.push(a); this.push(a); break;
-			case 0x04: /* NIP */ a = this.pop(); this.pop(); this.push(a); break;
-			case 0x05: /* SWP */ a = this.pop(); b = this.pop(); this.push(a); this.push(b); break;
-			case 0x06: /* OVR */ a = this.pop(); b = this.pop(); this.push(b); this.push(a); this.push(b); break;
-			case 0x07: /* ROT */ a = this.pop(); b = this.pop(); c = this.pop(); this.push(b); this.push(a); this.push(c); break;
+			case 0x03: /* NIP */ a = this.pop(); this.pop(); this.push(a); break;
+			case 0x04: /* SWP */ a = this.pop(); b = this.pop(); this.push(a); this.push(b); break;
+			case 0x05: /* ROT */ a = this.pop(); b = this.pop(); c = this.pop(); this.push(b); this.push(a); this.push(c); break;
+			case 0x06: /* DUP */ a = this.pop(); this.push(a); this.push(a); break;
+			case 0x07: /* OVR */ a = this.pop(); b = this.pop(); this.push(b); this.push(a); this.push(b); break;
 			/* Logic */
 			case 0x08: /* EQU */ a = this.pop(); b = this.pop(); this.push8(b == a); break;
 			case 0x09: /* NEQ */ a = this.pop(); b = this.pop(); this.push8(b != a); break;
