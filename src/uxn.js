@@ -6,10 +6,31 @@ function Stack(u) {
 	this.p = 0
 	this.u = u
 
+	this.set8 = (i, v) => { this.mem[i] = v }
 	this.at8 = (i) => { return this.mem[i] }
 	this.at16 = (i) => { return (this.mem[i] << 8) + this.mem[i + 1] }
 	this.get8 = (i) => { return this.at8(this.p - 1 - i) }
 	this.get16 = (i) => { return this.at16(this.p - 2 - i) }
+
+	this.drop8new = (i) => {
+		if(this.p == 0x00)
+			return this.u.halt(1)
+		let val = this.get8(i)
+		for(let j = this.p - i - 1; j < i + 1; j++)
+			this.set8(j, this.at8(j + 1))
+		this.p--
+		return val
+	}
+
+	this.drop16new = (i) => {
+		if(this.p == 0x00)
+			return this.u.halt(1)
+		let val = this.get16(i*2)
+		for(let j = this.p - i * 2 - 2; j < this.p; j++)
+			this.set8(j, this.at8(j + 2))
+		this.p -= 2
+		return val
+	}
 
 	this.drop8 = () => {
 		if(this.p == 0x00)
@@ -59,8 +80,11 @@ function Uxn (emu) {
 	/* Stack Primitives */
 	this.push = (v) => { if(this.r2) this.src().push16(v); else this.src().push8(v) }
 	this.drop = (i) => { return this.r2 ? this.src().drop16(i) : this.src().drop8(i) }
-	this.roll = (i) => { this.push(this.drop(i)) }
+	
 	this.pick = (i) => { this.push(this.r2 ? this.src().get16(i) : this.src().get8(i)) }
+	this.roll = (i) => { this.push(this.dropnew(i)) }
+
+	this.dropnew = (i) => { return this.r2 ? this.src().drop16new(i) : this.src().drop8new(i) }
 
 	this.eval = (pc) => {
 		let a, b, c, instr
@@ -80,17 +104,17 @@ function Uxn (emu) {
 			/* Stack */
 			case 0x00: /* LIT */ this.push(this.peek(pc)); pc += !!this.r2 + 1; break;
 			case 0x01: /* INC */ this.push(this.drop() + 1); break;
-			case 0x02: /* POP */ this.drop(0); break;
+			case 0x02: /* POP */ this.dropnew(0); break;
 			case 0x03: /* DUP */ this.pick(0); break;
-			case 0x04: /* NIP */ a = this.drop(); this.drop(); this.push(a); break;
-			case 0x05: /* SWP */ a = this.drop(); b = this.drop(); this.push(a); this.push(b); break;
+			case 0x04: /* NIP */ this.dropnew(1); break;
+			case 0x05: /* SWP */ this.roll(1); break;
 			case 0x06: /* OVR */ this.pick(1); break;
-			case 0x07: /* ROT */ a = this.drop(); b = this.drop(); c = this.drop(); this.push(b); this.push(a); this.push(c); break;
+			case 0x07: /* ROT */ this.roll(2); break;
 			/* Logic */
-			case 0x08: /* EQU */ a = this.drop(); b = this.drop(); this.src().push8(b == a); break;
-			case 0x09: /* NEQ */ a = this.drop(); b = this.drop(); this.src().push8(b != a); break;
-			case 0x0a: /* GTH */ a = this.drop(); b = this.drop(); this.src().push8(b > a); break;
-			case 0x0b: /* LTH */ a = this.drop(); b = this.drop(); this.src().push8(b < a); break;
+			case 0x08: /* EQU */ a = this.dropnew(0); b = this.dropnew(0); this.src().push8(b == a); break;
+			case 0x09: /* NEQ */ a = this.dropnew(0); b = this.dropnew(0); this.src().push8(b != a); break;
+			case 0x0a: /* GTH */ a = this.dropnew(0); b = this.dropnew(0); this.src().push8(b > a); break;
+			case 0x0b: /* LTH */ a = this.dropnew(0); b = this.dropnew(0); this.src().push8(b < a); break;
 			case 0x0c: /* JMP */ pc = this.jump(this.drop(), pc); break;
 			case 0x0d: /* JCN */ a = this.drop(); if(this.src().drop8()) pc = this.jump(a, pc); break;
 			case 0x0e: /* JSR */ this.dst().push16(pc); pc = this.jump(this.drop(), pc); break;
@@ -105,14 +129,14 @@ function Uxn (emu) {
 			case 0x16: /* DEI */ this.push(this.devr(this.src().drop8())); break;
 			case 0x17: /* DEO */ this.devw(this.src().drop8(), this.drop()); break;
 			/* Arithmetic */
-			case 0x18: /* ADD */ a = this.drop(); b = this.drop(); this.push(b + a); break;
-			case 0x19: /* SUB */ a = this.drop(); b = this.drop(); this.push(b - a); break;
-			case 0x1a: /* MUL */ a = this.drop(); b = this.drop(); this.push(b * a); break;
-			case 0x1b: /* DIV */ a = this.drop(); b = this.drop(); this.push(b / a); break;
-			case 0x1c: /* AND */ a = this.drop(); b = this.drop(); this.push(b & a); break;
-			case 0x1d: /* ORA */ a = this.drop(); b = this.drop(); this.push(b | a); break;
-			case 0x1e: /* EOR */ a = this.drop(); b = this.drop(); this.push(b ^ a); break;
-			case 0x1f: /* SFT */ a = this.src().drop8(); b = this.drop(); this.push(b >> (a & 0x0f) << ((a & 0xf0) >> 4)); break;
+			case 0x18: /* ADD */ a = this.dropnew(0); b = this.dropnew(0); this.push(b + a); break;
+			case 0x19: /* SUB */ a = this.dropnew(0); b = this.dropnew(0); this.push(b - a); break;
+			case 0x1a: /* MUL */ a = this.dropnew(0); b = this.dropnew(0); this.push(b * a); break;
+			case 0x1b: /* DIV */ a = this.dropnew(0); b = this.dropnew(0); this.push(b / a); break;
+			case 0x1c: /* AND */ a = this.dropnew(0); b = this.dropnew(0); this.push(b & a); break;
+			case 0x1d: /* ORA */ a = this.dropnew(0); b = this.dropnew(0); this.push(b | a); break;
+			case 0x1e: /* EOR */ a = this.dropnew(0); b = this.dropnew(0); this.push(b ^ a); break;
+			case 0x1f: /* SFT */ a = this.src().drop8(); b = this.dropnew(0); this.push(b >> (a & 0x0f) << ((a & 0xf0) >> 4)); break;
 			}
 		}
 	}

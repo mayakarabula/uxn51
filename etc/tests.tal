@@ -17,18 +17,14 @@
 	#00 INC [ #01 ] ;res1 JSR2
 	#01 INC [ #02 ] ;res1 JSR2
 	#ff INC [ #00 ] ;res1 JSR2
-	#03 INCk ADD [ #07 ] ;res1 JSR2
 	( POP )
 	#02 #03 POP [ #02 ] ;res1 JSR2
-	#02 POPk [ #02 ] ;res1 JSR2
 	( DUP )
 	#02 DUP ADD [ #04 ] ;res1 JSR2
 	( NIP )
 	#01 #02 #03 NIP ADD [ #04 ] ;res1 JSR2
-	#12 #34 NIPk ADD ADD [ #7a ] ;res1 JSR2
 	( SWP )
 	#02 #10 SWP DIV [ #08 ] ;res1 JSR2
-	#02 #10 SWPk ADD2 MUL [ #44 ] ;res1 JSR2
 	( OVR )
 	#02 #10 OVR DIV ADD [ #0a ] ;res1 JSR2
 	( ROT )
@@ -91,8 +87,6 @@
 	#01 #ff ADD [ #00 ] ;res1 JSR2
 	#ff #ff ADD [ #fe ] ;res1 JSR2
 	#fe #ff ADD [ #fd ] ;res1 JSR2
-	#12 #34 ADDk ADD ADD [ #8c ] ;res1 JSR2
-	#1234 #5678 ADD2k ADD2 ADD2 [ #d158 ] ;res2 JSR2
 	( SUB )
 	#1337 #ae40 SUB2 [ #64f7 ] ;res2 JSR2
 	#ae40 #1337 SUB2 [ #9b09 ] ;res2 JSR2
@@ -106,8 +100,6 @@
 	#01 #ff SUB [ #02 ] ;res1 JSR2
 	#ff #ff SUB [ #00 ] ;res1 JSR2
 	#fe #ff SUB [ #ff ] ;res1 JSR2
-	#12 #34 SUBk SUB SUB [ #bc ] ;res1 JSR2
-	#1234 #5678 SUB2k SUB2 SUB2 [ #7778 ] ;res2 JSR2
 	( MUL )
 	#00 #01 MUL [ #00 ] ;res1 JSR2
 	#3f #e7 MUL [ #d9 ] ;res1 JSR2
@@ -115,8 +107,6 @@
 	#10 #02 MUL [ #20 ] ;res1 JSR2
 	#ff #00 MUL [ #00 ] ;res1 JSR2
 	#ff #02 MUL [ #fe ] ;res1 JSR2
-	#12 #34 MULk MUL MUL [ #40 ] ;res1 JSR2
-	#1234 #5678 MUL2k MUL2 MUL2 [ #2400 ] ;res2 JSR2
 	( DIV )
 	#10 #02 DIV [ #08 ] ;res1 JSR2
 	#1000 #0040 DIV2 [ #0040 ] ;res2 JSR2
