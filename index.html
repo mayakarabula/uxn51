@@ -7,9 +7,29 @@
 	<script src="src/uxn.js"></script>
 </head>
 <body>
-<script type="text/javascript">
-	'use strict'
-	new Emu().uxn.load(program).eval(0x0100)
-</script>
+	<input type="value" placeholder="#12 #34 ADD" name="prompt" id="prompt" autofocus/>
+	<pre id="result"></pre>
+	<script type="text/javascript">
+
+		'use strict'
+
+		let prompt_el = document.getElementById("prompt")
+		let result_el = document.getElementById("result")
+		let emulator = new Emu()
+
+		// Load Unicycle.rom
+
+		prompt_el.addEventListener("keydown", function (event) {
+			if (event.key === "Enter") {
+				event.preventDefault();
+				// Send characters in value to Console/vector
+				result_el.innerHTML = "Result:"+prompt_el.value
+				// Read character from Console/write in element
+				console.log(prompt_el.value)
+			}
+		})
+
+		emulator.uxn.load(program).eval(0x0100)
+	</script>
 </body>
 </html> 

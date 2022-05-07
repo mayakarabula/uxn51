@@ -7,7 +7,7 @@ function Emu () {
 	this.buffer = ""
 
 	let opcodes = [
-		"LIT", "INC", "POP", "DUP", "NIP", "SWP", "OVR", "ROT",
+		"LIT", "INC", "POP", "NIP", "SWP", "ROT", "DUP", "OVR",
 		"EQU", "NEQ", "GTH", "LTH", "JMP", "JCN", "JSR", "STH",
 		"LDZ", "STZ", "LDR", "STR", "LDA", "STA", "DEI", "DEO",
 		"ADD", "SUB", "MUL", "DIV", "AND", "ORA", "EOR", "SFT",
