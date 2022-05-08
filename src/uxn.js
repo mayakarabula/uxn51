@@ -2,8 +2,12 @@
 
 function Stack(u, addr) 
 {
+	this.get = (index) => {
+		return u.ram[addr + index]
+	}
+
 	this.ptr = () => {
-		return u.ram[addr + 0xff]
+		return this.get(0xff)
 	}
 
 	this.inc = () => {
@@ -178,7 +182,7 @@ function Uxn (emu)
 	]
 
 	this.halt = (err) => {
-		console.error("Error", this.rr ? "Return-stack" : "Working-stack", errors[err]);
+		console.error("Error", this.rr ? "Return-stack" : "Working-stack", this.errors[err]);
 		this.pc = 0x0000
 	}
 

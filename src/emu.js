@@ -10,7 +10,7 @@ function Console(emu)
 	}
 
 	this.send = (char) => {
-		if(char == 0x0a){
+		if(char == 0x0a) {
 			this.display.innerHTML = this.buffer
 			this.buffer = ""
 		}
@@ -50,6 +50,14 @@ function Emu ()
 		return opcodes[byte & 0x1f] + m2 + mk + mr
 	}
 
+	this.debugger = () => {
+		if(!this.uxn.wst.ptr())
+			console.log("Stack is clean")
+		// Stack
+		for (let i = 0; i < this.uxn.wst.ptr(); i++)
+			console.log(this.uxn.wst.get(i))
+	}
+
 	this.onStep = (pc, instr) => {
 		if(this.debug)
 			console.log(getname(instr), pc)
@@ -61,8 +69,14 @@ function Emu ()
 
 	this.deo = (port, val) => {
 		this.uxn.setdev(port, val)
-		if(port == 0x18) {
+		if(port == 0x10 || port == 0x11) {
+			console.log("Set console vector")
+		}
+		else if(port == 0x18) {
 			this.console.send(val)
+		}
+		else {
+			console.log("Unknown deo", port, val)
 		}
 	}
 }
