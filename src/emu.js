@@ -2,6 +2,7 @@
 
 function Emu () {
 
+	this.debug = 0
 	this.uxn = new Uxn(this)
 
 	this.buffer = ""
@@ -25,19 +26,20 @@ function Emu () {
 			console.log(char);
 			// Trigger Vector
 		},
-		output: ""
+		output: "hello"
 	}
 
 	this.onStep = (pc, instr) => {
-		// console.log(getname(instr), pc)
+		if(this.debug)
+			console.log(getname(instr), pc)
 	}
 
 	this.dei = (port) => {
-		return this.uxn.dev[port]
+		return this.uxn.getdev(port)
 	}
 
 	this.deo = (port, val) => {
-		this.uxn.dev[port] = val
+		this.uxn.setdev(port, val)
 		if(port == 0x18) {
 			if(val == 0x0a){
 				console.log(this.buffer)
