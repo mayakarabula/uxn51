@@ -20,6 +20,14 @@ function Emu () {
 		return opcodes[byte & 0x1f] + m2 + mk + mr
 	}
 
+	this.console = {
+		input: (char) => {
+			console.log(char);
+			// Trigger Vector
+		},
+		output: ""
+	}
+
 	this.onStep = (pc, instr) => {
 		// console.log(getname(instr), pc)
 	}

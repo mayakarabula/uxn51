@@ -17,19 +17,21 @@
 		let result_el = document.getElementById("result")
 		let emulator = new Emu()
 
-		// Load Unicycle.rom
+		// TODO: Load Unicycle.rom
+		emulator.uxn.load(program).eval(0x0100)
 
 		prompt_el.addEventListener("keydown", function (event) {
 			if (event.key === "Enter") {
 				event.preventDefault();
 				// Send characters in value to Console/vector
-				result_el.innerHTML = "Result:"+prompt_el.value
+				for (var i = 0; i < prompt_el.value.length; i++) {
+					emulator.console.input(prompt_el.value.charAt(i).charCodeAt(0))
+				}
+				result_el.innerHTML = "Result:"+emulator.console.output
 				// Read character from Console/write in element
-				console.log(prompt_el.value)
 			}
 		})
 
-		emulator.uxn.load(program).eval(0x0100)
 	</script>
 </body>
 </html> 
