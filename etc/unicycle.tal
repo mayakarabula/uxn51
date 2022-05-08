@@ -42,7 +42,6 @@ BRK
 
 @on-complete ( -> )
 	
-	#ffff LDA JMP BRK
 	;&wst-txt ;print-str JSR2
 	#ffff LDA #00
 	&loop
