@@ -1,27 +1,31 @@
 'use strict'
 
-function Stack(u) {
+function Stack(u, addr) 
+{
+	this.ptr = () => {
+		return u.ram[addr + 0xff]
+	}
 
-	this.mem = new Uint8Array(0x100)
-	this.p = 0
-	this.u = u
+	this.inc = () => {
+		return u.ram[addr + 0xff]++
+	}
+
+	this.dec = () => {
+		return u.rk ? --this.pk : --u.ram[addr + 0xff]
+	}
 
 	this.pop8 = () => {
-		if(this.p == 0x00)
-			return this.u.halt(1)
-		if(this.u.rk)
-			return this.mem[--this.pk]
-		return this.mem[--this.p]
+		return this.ptr() == 0x00 ? u.halt(1) : u.ram[addr + this.dec()]
+	}
+
+	this.push8 = (val) => {
+		if(this.ptr() == 0xff)
+			return u.halt(2)
+		u.ram[addr + this.inc()] = val
 	}
 
 	this.pop16 = () => {
 		return this.pop8() + (this.pop8() << 8)
-	}
-
-	this.push8 = (val) => {
-		if(this.p == 0xff)
-			return this.u.halt(2)
-		this.mem[this.p++] = val
 	}
 
 	this.push16 = (val) => {
@@ -30,63 +34,62 @@ function Stack(u) {
 	}
 }
 
-
 function Uxn (emu) {
 
 	this.emu = emu
-	this.ram = new Uint8Array(0x10000)
-	this.wst = new Stack(this)
-	this.rst = new Stack(this)
+	this.ram = new Uint8Array(0x13000)
+	this.wst = new Stack(this, 0x10000)
+	this.rst = new Stack(this, 0x11000)
 	this.dev = 0x12000
 
 	this.getdev = (port) => { return this.ram[this.dev + port] }
 	this.setdev = (port, val) => { this.ram[this.dev + port] = val }
 
-	this.pop = () => { 
-		return this.r2 ? this.src.pop16() : this.src.pop8() 
+	this.pop = () => {
+		return this.r2 ? this.src.pop16() : this.src.pop8()
 	}
 
-	this.push8 = (x) => { 
-		this.src.push8(x) 
+	this.push8 = (x) => {
+		this.src.push8(x)
 	}
 
-	this.push16 = (x) => { 
-		this.src.push16(x) 
+	this.push16 = (x) => {
+		this.src.push16(x)
 	}
 
-	this.push = (val) => { 
-		if(this.r2) 
-			this.push16(val) 
-		else 
-			this.push8(val) 
+	this.push = (val) => {
+		if(this.r2)
+			this.push16(val)
+		else
+			this.push8(val)
 	}
 
-	this.peek = (addr) => { 
-		return this.r2 ? (this.ram[addr] << 8) + this.ram[addr + 1] : this.ram[addr] 
+	this.peek = (addr) => {
+		return this.r2 ? (this.ram[addr] << 8) + this.ram[addr + 1] : this.ram[addr]
 	}
 
-	this.poke = (addr, val) => { 
-		if(this.r2) { 
-			this.ram[addr] = val >> 8; 
-			this.ram[addr + 1] = val; 
-		} else 
-			this.ram[addr] = val 
+	this.poke = (addr, val) => {
+		if(this.r2) {
+			this.ram[addr] = val >> 8;
+			this.ram[addr + 1] = val;
+		} else
+			this.ram[addr] = val
 	}
 
-	this.devr = (port) => { 
-		return this.r2 ? (this.emu.dei(port) << 8) + this.emu.dei(port+1) : this.emu.dei(port) 
+	this.devr = (port) => {
+		return this.r2 ? (this.emu.dei(port) << 8) + this.emu.dei(port+1) : this.emu.dei(port)
 	}
 
-	this.devw = (port, val) => { 
-		if(this.r2) { 
-			this.emu.deo(port, val >> 8); 
-			this.emu.deo(port+1, val & 0xff) 
-		} else 
-			this.emu.deo(port, val) 
+	this.devw = (port, val) => {
+		if(this.r2) {
+			this.emu.deo(port, val >> 8);
+			this.emu.deo(port+1, val & 0xff)
+		} else
+			this.emu.deo(port, val)
 	}
 
-	this.jump = (addr, pc) => { 
-		return this.r2 ? addr : pc + rel(addr); 
+	this.jump = (addr, pc) => {
+		return this.r2 ? addr : pc + rel(addr);
 	}
 
 	this.eval = (pc) => {
@@ -100,8 +103,8 @@ function Uxn (emu) {
 			this.rr = instr & 0x40
 			this.rk = instr & 0x80
 			if(this.rk) {
-				this.wst.pk = this.wst.p
-				this.rst.pk = this.rst.p
+				this.wst.pk = this.wst.ptr()
+				this.rst.pk = this.rst.ptr()
 			}
 			if(this.rr) {
 				this.src = this.rst
