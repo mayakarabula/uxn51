@@ -196,9 +196,6 @@
 	( STA/LDA )
 	#34 ;absolute/byte STA ;absolute/byte LDA [ #34 ] ;res1 JSR2
 	#1234 ;absolute/short STA2 ;absolute/short LDA2 [ #1234 ] ;res2 JSR2
-	( DEO/DEI )
-	#01 #ff DEO #ff DEI [ #01 ] ;res1 JSR2
-	#1234 #fe DEO2 #fe DEI2 [ #1234 ] ;res2 JSR2
 
 	( JMP )
 	#12 #34 ,&reljmp JMP SWP &reljmp POP [ #12 ] ;res1 JSR2
@@ -211,13 +208,18 @@
 	( STH )
 	#22 STH INCkr ADDr STHr [ #45 ] ;res1 JSR2
 
+	( MIX )
+	#1234 SWPk ADD2 ADD [ #8c ] ;res1 JSR2
+
 	#0a18 DEO #0a18 DEO
 
+	;&complete-txt ;print-str JSR2
 	.sum LDZ ;print/byte JSR2 LIT '/ #18 DEO .id LDZ ;print/byte JSR2 #0a18 DEO
 
 	#010f DEO
 
 BRK
+	&complete-txt "Completed: 20 $1
 
 @res1 ( a b -- )
 

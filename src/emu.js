@@ -11,7 +11,7 @@ function Console(emu)
 
 	this.send = (char) => {
 		if(char == 0x0a) {
-			this.display.innerHTML = this.buffer
+			this.display.innerHTML += this.buffer+"\n"
 			this.buffer = ""
 		}
 		else{
@@ -54,8 +54,11 @@ function Emu ()
 		if(!this.uxn.wst.ptr())
 			console.log("Stack is clean")
 		// Stack
-		for (let i = 0; i < this.uxn.wst.ptr(); i++)
-			console.log(this.uxn.wst.get(i))
+		let buf = ""
+		for (let i = 0; i < this.uxn.wst.ptr(); i++){
+			buf += this.uxn.wst.get(i).toString(16)+" "
+		}
+		console.warn(buf)
 	}
 
 	this.onStep = (pc, instr) => {
@@ -74,6 +77,9 @@ function Emu ()
 		}
 		else if(port == 0x18) {
 			this.console.send(val)
+		}
+		else if(port == 0x0f) {
+			console.warn("Program ended.")
 		}
 		else {
 			console.log("Unknown deo", port, val)
