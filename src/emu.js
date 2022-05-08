@@ -1,11 +1,40 @@
 'use strict'
 
-function Emu () {
+function Console(emu)
+{
+	this.buffer = ""
+	this.display = null
 
+	this.i = (char) => {
+		console.log("i",char)
+	}
+
+	this.send = (char) => {
+		if(char == 0x0a){
+			this.display.innerHTML = this.buffer
+			this.buffer = ""
+		}
+		else{
+			this.buffer += String.fromCharCode(char)
+		}
+	}
+
+	this.input = (char) => {
+		// Get vector
+		let vec = emu.uxn.peek16(emu.uxn.dev + 0x10)
+		// Set char
+		emu.uxn.poke8(emu.uxn.dev + 0x12, char)
+		if(!vec)
+			console.warn("No console vector")
+		emu.uxn.eval(vec)
+	}
+}
+
+function Emu ()
+{
 	this.debug = 0
 	this.uxn = new Uxn(this)
-
-	this.buffer = ""
+	this.console = new Console(this)
 
 	let opcodes = [
 		"LIT", "INC", "POP", "NIP", "SWP", "ROT", "DUP", "OVR",
@@ -21,14 +50,6 @@ function Emu () {
 		return opcodes[byte & 0x1f] + m2 + mk + mr
 	}
 
-	this.console = {
-		input: (char) => {
-			console.log(char);
-			// Trigger Vector
-		},
-		output: "hello"
-	}
-
 	this.onStep = (pc, instr) => {
 		if(this.debug)
 			console.log(getname(instr), pc)
@@ -41,13 +62,7 @@ function Emu () {
 	this.deo = (port, val) => {
 		this.uxn.setdev(port, val)
 		if(port == 0x18) {
-			if(val == 0x0a){
-				console.log(this.buffer)
-				this.buffer = ""
-			}
-			else{
-				this.buffer += String.fromCharCode(val)
-			}
+			this.console.send(val)
 		}
 	}
 }

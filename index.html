@@ -7,7 +7,7 @@
 	<script src="src/uxn.js"></script>
 </head>
 <body>
-	<input type="value" placeholder="#12 #34 ADD" name="prompt" id="prompt" autofocus/>
+	<input type="value" placeholder="talk.rom" name="prompt" id="prompt" autofocus/>
 	<pre id="result"></pre>
 	<script type="text/javascript">
 
@@ -16,6 +16,7 @@
 		let prompt_el = document.getElementById("prompt")
 		let result_el = document.getElementById("result")
 		let emulator = new Emu()
+		emulator.console.display = result_el
 
 		// TODO: Load Unicycle.rom
 		emulator.uxn.load(program).eval(0x0100)
@@ -27,11 +28,10 @@
 				for (var i = 0; i < prompt_el.value.length; i++) {
 					emulator.console.input(prompt_el.value.charAt(i).charCodeAt(0))
 				}
-				result_el.innerHTML = "Result:"+emulator.console.output
-				// Read character from Console/write in element
+				emulator.console.input(0x0a)
+				prompt_el.value = ""
 			}
 		})
-
 	</script>
 </body>
 </html> 

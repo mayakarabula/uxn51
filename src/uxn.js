@@ -34,9 +34,8 @@ function Stack(u, addr)
 	}
 }
 
-function Uxn (emu) {
-
-	this.emu = emu
+function Uxn (emu)
+{
 	this.ram = new Uint8Array(0x13000)
 	this.wst = new Stack(this, 0x10000)
 	this.rst = new Stack(this, 0x11000)
@@ -64,8 +63,20 @@ function Uxn (emu) {
 			this.push8(val)
 	}
 
+	this.peek8 = (addr) => {
+		return this.ram[addr]
+	}
+
+	this.peek16 = (addr) => {
+		return (this.ram[addr] << 8) + this.ram[addr + 1]
+	}
+
 	this.peek = (addr) => {
-		return this.r2 ? (this.ram[addr] << 8) + this.ram[addr + 1] : this.ram[addr]
+		return this.r2 ? this.peek16(addr) : this.ram[addr]
+	}
+
+	this.poke8 = (addr, val) => {
+		this.ram[addr] = val
 	}
 
 	this.poke = (addr, val) => {
@@ -77,15 +88,15 @@ function Uxn (emu) {
 	}
 
 	this.devr = (port) => {
-		return this.r2 ? (this.emu.dei(port) << 8) + this.emu.dei(port+1) : this.emu.dei(port)
+		return this.r2 ? (emu.dei(port) << 8) + emu.dei(port+1) : emu.dei(port)
 	}
 
 	this.devw = (port, val) => {
 		if(this.r2) {
-			this.emu.deo(port, val >> 8);
-			this.emu.deo(port+1, val & 0xff)
+			emu.deo(port, val >> 8);
+			emu.deo(port+1, val & 0xff)
 		} else
-			this.emu.deo(port, val)
+			emu.deo(port, val)
 	}
 
 	this.jump = (addr, pc) => {
@@ -97,7 +108,7 @@ function Uxn (emu) {
 		if(!pc || this.dev[0x0f])
 			return 0;
 		while((instr = this.ram[pc++])) {
-			this.emu.onStep(pc, instr)
+			emu.onStep(pc, instr)
 			// registers
 			this.r2 = instr & 0x20
 			this.rr = instr & 0x40

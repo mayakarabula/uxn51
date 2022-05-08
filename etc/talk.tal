@@ -1,0 +1,37 @@
+|10 @Console &vector $2 &read $1 &pad $5 &write $1 &error $1
+
+|0100
+
+	;on-console .Console/vector DEO2
+	;boot-txt ;print-str JSR2
+
+BRK
+	
+@on-console ( -> )
+
+	[ LIT &started $1 ] ,&skip JCN
+		;a-txt ;print-str JSR2
+		&skip
+	#01
+	.Console/read DEI 
+	DUP #0a NEQ ,&no-lb JCN
+		;b-txt ;print-str JSR2
+		SWP POP #00 SWP
+		&no-lb 
+	#18 DEO
+	,&started STR
+
+BRK
+
+@print-str ( str* -- )
+
+	&while
+		LDAk #18 DEO
+		INC2 LDAk ,&while JCN
+	POP2
+
+JMP2r
+
+@boot-txt "Say 20 "something: 0a $1
+@a-txt "You 20 "said: 20 '" $1
+@b-txt "". $1
