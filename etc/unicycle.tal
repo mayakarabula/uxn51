@@ -50,6 +50,8 @@ BRK
 		INC GTHk ,&loop JCN
 	POP2
 	#0a18 DEO
+	LIT '> #18 DEO
+	#2018 DEO
 	#00 .System/wst DEO
 
 BRK

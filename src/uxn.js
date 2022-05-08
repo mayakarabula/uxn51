@@ -148,7 +148,7 @@ function Uxn (emu)
 			case 0x0c: /* JMP */ pc = this.jump(this.pop(), pc); break;
 			case 0x0d: /* JCN */ a = this.pop(); if(this.src.pop8()) pc = this.jump(a, pc); break;
 			case 0x0e: /* JSR */ this.dst.push16(pc); pc = this.jump(this.pop(), pc); break;
-			case 0x0f: /* STH */ this.dst.push16(this.pop()); break;
+			case 0x0f: /* STH */ if(this.r2){ this.dst.push16(this.src.pop16()); } else{ this.dst.push8(this.src.pop8()); } break;
 			// Memory
 			case 0x10: /* LDZ */ this.push(this.peek(this.src.pop8())); break;
 			case 0x11: /* STZ */ this.poke(this.src.pop8(), this.pop()); break;

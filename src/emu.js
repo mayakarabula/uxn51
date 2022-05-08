@@ -11,7 +11,7 @@ function Console(emu)
 
 	this.send = (char) => {
 		if(char == 0x0a) {
-			this.display.innerHTML += this.buffer+"\n"
+			this.display.innerHTML = this.buffer
 			this.buffer = ""
 		}
 		else{
