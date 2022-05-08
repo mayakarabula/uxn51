@@ -55,7 +55,7 @@ function Emu ()
 			console.log("Stack is clean")
 		// Stack
 		let buf = ""
-		for (let i = 0; i < this.uxn.wst.ptr(); i++){
+		for (let i = 0; i < this.uxn.wst.ptr(); i++) {
 			buf += this.uxn.wst.get(i).toString(16)+" "
 		}
 		console.warn(buf)
@@ -74,6 +74,12 @@ function Emu ()
 		this.uxn.setdev(port, val)
 		if(port == 0x10 || port == 0x11) {
 			console.log("Set console vector")
+		}
+		else if(port == 0x00 || port == 0x01) {
+			console.log("Set system vector")
+		}
+		else if(port == 0x02) {
+			this.uxn.wst.addr = val ? val * 0x100 : 0x10000
 		}
 		else if(port == 0x18) {
 			this.console.send(val)

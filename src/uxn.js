@@ -2,8 +2,10 @@
 
 function Stack(u, addr) 
 {
+	this.addr = addr
+
 	this.get = (index) => {
-		return u.ram[addr + index]
+		return u.ram[this.addr + index]
 	}
 
 	this.ptr = () => {
@@ -11,21 +13,21 @@ function Stack(u, addr)
 	}
 
 	this.inc = () => {
-		return u.ram[addr + 0xff]++
+		return u.ram[this.addr + 0xff]++
 	}
 
 	this.dec = () => {
-		return u.rk ? --this.pk : --u.ram[addr + 0xff]
+		return u.rk ? --this.pk : --u.ram[this.addr + 0xff]
 	}
 
 	this.pop8 = () => {
-		return this.ptr() == 0x00 ? u.halt(1) : u.ram[addr + this.dec()]
+		return this.ptr() == 0x00 ? u.halt(1) : u.ram[this.addr + this.dec()]
 	}
 
 	this.push8 = (val) => {
 		if(this.ptr() == 0xff)
 			return u.halt(2)
-		u.ram[addr + this.inc()] = val
+		u.ram[this.addr + this.inc()] = val
 	}
 
 	this.pop16 = () => {
