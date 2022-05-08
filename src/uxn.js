@@ -2,7 +2,7 @@
 
 function Stack(u) {
 
-	this.mem = new Uint8Array(0xfe)
+	this.mem = new Uint8Array(0x100)
 	this.p = 0
 	this.u = u
 
@@ -15,11 +15,7 @@ function Stack(u) {
 	}
 
 	this.pop16 = () => {
-		if(this.p < 0x02)
-			return this.u.halt(1)
-		if(this.u.rk)
-			return this.mem[--this.pk] + (this.mem[--this.pk] << 8)
-		return this.mem[--this.p] + (this.mem[--this.p] << 8)
+		return this.pop8() + (this.pop8() << 8)
 	}
 
 	this.push8 = (val) => {
@@ -29,10 +25,8 @@ function Stack(u) {
 	}
 
 	this.push16 = (val) => {
-		if(this.p > 0xfe)
-			return this.u.halt(2)
-		this.mem[this.p++] = val >> 0x08
-		this.mem[this.p++] = val & 0xff
+		this.push8(val >> 0x08)
+		this.push8(val & 0xff)
 	}
 }
 
