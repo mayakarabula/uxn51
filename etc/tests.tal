@@ -2,8 +2,9 @@
 
 ( Requirements: 
 	EQU/EQU2 should put #00 or #01 on the stack
-	DEV#18 DEO should output ascii character to console
-	Stacks locations in memory assigned with DEV#02 and DEV#03 )
+	#18 DEO should output ascii character to console
+	#02 DEO should set location of working stack in memory
+	#03 DEO should set location of return stack in memory )
 
 %EMIT { #18 DEO }
 %TEST-SHORT { EQU2 #30 ADD EMIT }
