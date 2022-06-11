@@ -4,11 +4,15 @@
 	#18 DEO should output ascii to console 
 	EQU/EQU2 should put #00 or #01 on the stack )
 
-%TEST-SHORT { EQU2 #30 ADD #18 DEO }
-%TEST-BYTE { EQU #30 ADD #18 DEO }
+%EMIT { #18 DEO }
+%ERRPORT { #0e }
+%TEST-SHORT { EQU2 #30 ADD EMIT }
+%TEST-BYTE { EQU #30 ADD EMIT }
 %MODE { #2018 DEO }
 %OPCODE { #0a18 DEO }
 %TYPE { OPCODE OPCODE }
+
+|00 @System &vector $2 &wst $1 &rst $1 &pad $4 &r $2 &g $2 &b $2
 
 |0000
 
@@ -16,6 +20,11 @@
 		&byte $1 &short $2
 
 |0100
+
+	( set wst as #fe page )
+	#fe .System/rst DEO
+	( set wst as #ff page )
+	#ff .System/wst DEO
 
 	( Logic )
 
@@ -229,59 +238,146 @@
 
 	( STZ/LDZ )
 	#ab .zeropage/byte STZ .zeropage/byte LDZ [ #ab ] TEST-BYTE
+	#cd .zeropage/byte STZ .zeropage/byte LDZ [ #cd ] TEST-BYTE
+	MODE
 	#1234 .zeropage/short STZ2 .zeropage/short LDZ2 [ #1234 ] TEST-SHORT
+	#5678 .zeropage/short STZ2 .zeropage/short LDZ2 [ #5678 ] TEST-SHORT
 	OPCODE
+
 	( STR/LDR )
 	[ LIT &before1 $1 ] POP
 	[ LIT2 &before2 $2 ] POP2
 	#22 ,&before1 STR ,&before1 LDR [ #22 ] TEST-BYTE
-	#1234 ,&before2 STR2 ,&before2 LDR2 [ #1234 ] TEST-SHORT
 	#ef ,&after1 STR ,&after1 LDR [ #ef ] TEST-BYTE
+	MODE
+	#1234 ,&before2 STR2 ,&before2 LDR2 [ #1234 ] TEST-SHORT
 	#5678 ,&after2 STR2 ,&after2 LDR2 [ #5678 ] TEST-SHORT
 	[ LIT &after1 $1 ] POP
 	[ LIT2 &after2 $2 ] POP2
 	OPCODE
+
 	( STA/LDA )
 	#34 ;absolute/byte STA ;absolute/byte LDA [ #34 ] TEST-BYTE
+	#56 ;absolute/byte STA ;absolute/byte LDA [ #56 ] TEST-BYTE
+	MODE
 	#1234 ;absolute/short STA2 ;absolute/short LDA2 [ #1234 ] TEST-SHORT
+	#5678 ;absolute/short STA2 ;absolute/short LDA2 [ #5678 ] TEST-SHORT
+	OPCODE
+
+	( DEI/DEO )
+	LIT '1 EMIT
+	LIT '1 EMIT
 	TYPE
+
+	( Branching )
 
 	( JMP )
 	#12 #34 ,&reljmp JMP SWP &reljmp POP [ #12 ] TEST-BYTE
+	MODE
 	#56 #78 ;&absjmp JMP2 SWP &absjmp POP [ #56 ] TEST-BYTE
 	OPCODE
+
 	( JCN )
 	#23 #01 ,&reljcn-y JCN INC &reljcn-y [ #23 ] TEST-BYTE
-	#23 #01 ;&absjcn-y JCN2 INC &absjcn-y [ #23 ] TEST-BYTE
 	#23 #00 ,&reljcn-n JCN INC &reljcn-n [ #24 ] TEST-BYTE
+	MODE
+	#23 #01 ;&absjcn-y JCN2 INC &absjcn-y [ #23 ] TEST-BYTE
 	#23 #00 ;&absjcn-n JCN2 INC &absjcn-n [ #24 ] TEST-BYTE
 	OPCODE
-	( JSR )
-	( STH )
-	#22 STH INCkr ADDr STHr [ #45 ] TEST-BYTE
-	TYPE
 
-	( MIX )
-	#1234 SWPk ADD2 ADD [ #8c ] TEST-BYTE
-	#12 #34 ADDk ADD ADD [ #8c ] TEST-BYTE
-	#1234 #5678 ADD2k ADD2 ADD2 [ #d158 ] TEST-SHORT
-	#12 #34 SUBk SUB SUB [ #bc ] TEST-BYTE
-	#1234 #5678 SUB2k SUB2 SUB2 [ #7778 ] TEST-SHORT
-	#12 #34 MULk MUL MUL [ #40 ] TEST-BYTE
-	#1234 #5678 MUL2k MUL2 MUL2 [ #2400 ] TEST-SHORT
-	#02 POPk [ #02 ] TEST-BYTE
-	#02 DUPk ADD ADD [ #06 ] TEST-BYTE
-	#12 #34 NIPk ADD ADD [ #7a ] TEST-BYTE
-	#02 #10 SWPk ADD2 MUL [ #44 ] TEST-BYTE
-	#03 INCk ADD [ #07 ] TEST-BYTE
+	( JSR - Requires return mode )
+	#12 #34 ;routine JSR2 [ #46 ] TEST-BYTE
 	OPCODE
 
-	( Errors )
+	( STH )
+	#0a STH #0b STH ADDr STHr [ #15 ] TEST-BYTE
+	MODE
+	#000a STH2 #000b STH2 ADD2r STH2r [ #0015 ] TEST-SHORT
+	TYPE
 
+	( Keep )
+	#12 #34 ADDk ADD ADD [ #8c ] TEST-BYTE
+	OPCODE
+
+	( Error: Division By Zero )
+	;on-error-division #00 DEO2
+	#10 #00 DIV
+
+	@err2
+	( Error: Working Stack Underflow )
+	;on-error-underflow #00 DEO2
+	POP
+
+	@err3
+	( Error: Return Stack Underflow )
+	;on-error-underflowr #00 DEO2
+	POPr
+
+	@end
 	#010e DEO
 	#010f DEO
 
 BRK
+
+@routine ( a b -- c )
+
+	ADD
+
+JMP2r
+
+@on-error-division ( -> )
+
+	;error-txt ;print-str JSR2
+	;wst-txt ;print-str JSR2
+	#2018 DEO
+	#fffe LDA ;print/byte JSR2 #0a18 DEO
+	( reset wst ) #00 #ffff STA
+	;err2 JMP2
+
+BRK
+
+@on-error-underflow ( -> )
+
+	;error-txt ;print-str JSR2
+	;wst-txt ;print-str JSR2
+	#2018 DEO
+	#fffe LDA ;print/byte JSR2 #0a18 DEO
+	( reset wst ) #00 #ffff STA
+	;err3 JMP2
+
+BRK
+
+@on-error-underflowr ( -> )
+
+	;error-txt ;print-str JSR2
+	;rst-txt ;print-str JSR2
+	#2018 DEO
+	#fffe LDA ;print/byte JSR2 #0a18 DEO
+	( reset wst ) #00 #feff STA
+	;end JMP2
+
+BRK
+
+@error-txt "Error $1
+@wst-txt "(wst) $1
+@rst-txt "(rst) $1
+
+@print-str ( str* -- )
+
+	&while
+		LDAk #18 DEO
+		INC2 LDAk ,&while JCN
+	POP2
+
+JMP2r
+
+@print ( short* -- )
+
+	SWP ,&byte JSR
+	&byte ( byte -- ) DUP #04 SFT ,&char JSR
+	&char ( char -- ) #0f AND DUP #09 GTH #27 MUL ADD #30 ADD #18 DEO
+
+JMP2r
 
 @absolute 
 	&byte $1 &short $2
