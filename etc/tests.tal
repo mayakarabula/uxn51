@@ -329,34 +329,34 @@ JMP2r
 
 @on-error-division ( -> )
 
-	;error-txt ;print-str JSR2
-	;wst-txt ;print-str JSR2
-	#20 EMIT WST GET-ERR ;print/byte JSR2 #0a EMIT
+	WST ;print-err JSR2
 	;err2 JMP2
 
 BRK
 
 @on-error-underflow ( -> )
 
-	;error-txt ;print-str JSR2
-	;wst-txt ;print-str JSR2
-	#20 EMIT WST GET-ERR ;print/byte JSR2 #0a EMIT
+	WST ;print-err JSR2
 	;err3 JMP2
 
 BRK
 
 @on-error-underflowr ( -> )
 
-	;error-txt ;print-str JSR2
-	;rst-txt ;print-str JSR2
-	#20 EMIT RST GET-ERR ;print/byte JSR2 #0a EMIT
+	RST ;print-err JSR2
 	;end JMP2
 
 BRK
 
-@error-txt "Error $1
-@wst-txt "(wst) $1
-@rst-txt "(rst) $1
+@print-err ( page -- )
+
+	;err-txt ;print-str JSR2
+	;rst-txt ;print-str JSR2
+	#20 EMIT 
+	GET-ERR ;print/byte JSR2 
+	#0a EMIT
+
+JMP2r
 
 @print-str ( str* -- )
 
@@ -374,6 +374,10 @@ JMP2r
 	&char ( char -- ) #0f AND DUP #09 GTH #27 MUL ADD #30 ADD #18 DEO
 
 JMP2r
+
+@err-txt "Error $1
+@wst-txt "(wst) $1
+@rst-txt "(rst) $1
 
 @absolute 
 	&byte $1 &short $2
