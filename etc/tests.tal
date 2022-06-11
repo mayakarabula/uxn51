@@ -1,4 +1,8 @@
-( a little script to test operators )
+( Opcode Tester )
+
+( Requirements: 
+	#18 DEO should output ascii to console 
+	EQU/EQU2 should put #00 or #01 on the stack )
 
 %TEST-SHORT { EQU2 #30 ADD #18 DEO }
 %TEST-BYTE { EQU #30 ADD #18 DEO }
@@ -105,22 +109,28 @@
 
 	( DIV )
 	#10 #02 DIV [ #08 ] TEST-BYTE
-	#20 #20 DIV [ #08 ] TEST-BYTE
-	#34 #01 DIV [ #08 ] TEST-BYTE
-	#02 #ef DIV [ #08 ] TEST-BYTE
+	#20 #20 DIV [ #01 ] TEST-BYTE
+	#34 #01 DIV [ #34 ] TEST-BYTE
+	#02 #ef DIV [ #00 ] TEST-BYTE
 	MODE
 	#1000 #0040 DIV2 [ #0040 ] TEST-SHORT
-	#abcd #1234 DIV2 [ #0040 ] TEST-SHORT
+	#abcd #1234 DIV2 [ #0009 ] TEST-SHORT
 	#8000 #0200 DIV2 [ #0040 ] TEST-SHORT
-	#2222 #0003 DIV2 [ #0040 ] TEST-SHORT
+	#2222 #0003 DIV2 [ #0b60 ] TEST-SHORT
 	TYPE
 
 	( Stack )
 
 	( INC )
 	#01 INC [ #02 ] TEST-BYTE
+	#ff INC [ #00 ] TEST-BYTE
+	#fe INC [ #ff ] TEST-BYTE
+	#00 INC [ #01 ] TEST-BYTE
 	MODE
 	#0001 INC2 [ #0002 ] TEST-SHORT
+	#ffff INC2 [ #0000 ] TEST-SHORT
+	#fffe INC2 [ #ffff ] TEST-SHORT
+	#0000 INC2 [ #0001 ] TEST-SHORT
 	OPCODE
 
 	( POP )
@@ -266,8 +276,10 @@
 	#12 #34 NIPk ADD ADD [ #7a ] TEST-BYTE
 	#02 #10 SWPk ADD2 MUL [ #44 ] TEST-BYTE
 	#03 INCk ADD [ #07 ] TEST-BYTE
-
 	OPCODE
+
+	( Errors )
+
 	#010e DEO
 	#010f DEO
 
