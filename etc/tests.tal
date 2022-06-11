@@ -181,61 +181,47 @@
 	#fc #3f AND [ #3c ] TEST-BYTE
 	#f0 #0f AND [ #00 ] TEST-BYTE
 	#ff #3c AND [ #3c ] TEST-BYTE
+	#02 #03 AND [ #02 ] TEST-BYTE
+	MODE
+	#f0f0 #00f0 AND2 [ #00f0 ] TEST-SHORT
+	#aaaa #5555 AND2 [ #0000 ] TEST-SHORT
+	#ffff #1234 AND2 [ #1234 ] TEST-SHORT
+	#abcd #0a0c AND2 [ #0a0c ] TEST-SHORT
 	OPCODE
+
 	( ORA )
 	#0f #f0 ORA [ #ff ] TEST-BYTE
+	#ab #cd ORA [ #ef ] TEST-BYTE
+	#12 #34 ORA [ #36 ] TEST-BYTE
+	#88 #10 ORA [ #98 ] TEST-BYTE
+	MODE
+	#0f0f #f0f0 ORA2 [ #ffff ] TEST-SHORT
+	#abab #cdcd ORA2 [ #efef ] TEST-SHORT
+	#1122 #1234 ORA2 [ #1336 ] TEST-SHORT
+	#8888 #1000 ORA2 [ #9888 ] TEST-SHORT
 	OPCODE
+
 	( EOR )
 	#00 #00 EOR [ #00 ] TEST-BYTE
 	#ff #00 EOR [ #ff ] TEST-BYTE
 	#aa #55 EOR [ #ff ] TEST-BYTE
 	#ff #ff EOR [ #00 ] TEST-BYTE
+	MODE
 	#ffff #ff00 EOR2 [ #00ff ] TEST-SHORT
 	#aaaa #5555 EOR2 [ #ffff ] TEST-SHORT
+	#1122 #1234 EOR2 [ #0316 ] TEST-SHORT
+	#8888 #1000 EOR2 [ #9888 ] TEST-SHORT
 	OPCODE
+
 	( SFT )
-	#ff #00 SFT [ #ff ] TEST-BYTE
-	#ff #01 SFT [ #7f ] TEST-BYTE
-	#ff #07 SFT [ #01 ] TEST-BYTE
 	#ff #08 SFT [ #00 ] TEST-BYTE
-	#ff #09 SFT [ #00 ] TEST-BYTE
-	#ff #0e SFT [ #00 ] TEST-BYTE
-	#ff #0f SFT [ #00 ] TEST-BYTE
-	#ffff #00 SFT2 [ #ffff ] TEST-SHORT
-	#ffff #01 SFT2 [ #7fff ] TEST-SHORT
-	#ffff #02 SFT2 [ #3fff ] TEST-SHORT
-	#ffff #07 SFT2 [ #01ff ] TEST-SHORT
-	#ffff #08 SFT2 [ #00ff ] TEST-SHORT
-	#ffff #09 SFT2 [ #007f ] TEST-SHORT
-	#ffff #0a SFT2 [ #003f ] TEST-SHORT
-	#ffff #0e SFT2 [ #0003 ] TEST-SHORT
-	#ffff #0f SFT2 [ #0001 ] TEST-SHORT
-	#ff #10 SFT [ #fe ] TEST-BYTE
-	#ff #70 SFT [ #80 ] TEST-BYTE
-	#ff #80 SFT [ #00 ] TEST-BYTE
-	#ff #90 SFT [ #00 ] TEST-BYTE
 	#ff #e0 SFT [ #00 ] TEST-BYTE
-	#ff #f0 SFT [ #00 ] TEST-BYTE
-	#ffff #10 SFT2 [ #fffe ] TEST-SHORT
-	#ffff #20 SFT2 [ #fffc ] TEST-SHORT
-	#ffff #70 SFT2 [ #ff80 ] TEST-SHORT
-	#ffff #80 SFT2 [ #ff00 ] TEST-SHORT
-	#ffff #90 SFT2 [ #fe00 ] TEST-SHORT
-	#ffff #a0 SFT2 [ #fc00 ] TEST-SHORT
-	#ffff #e0 SFT2 [ #c000 ] TEST-SHORT
-	#ffff #f0 SFT2 [ #8000 ] TEST-SHORT
-	#ff #12 SFT [ #7e ] TEST-BYTE
-	#ff #77 SFT [ #80 ] TEST-BYTE
 	#ff #11 SFT [ #fe ] TEST-BYTE
-	#ff #3f SFT [ #00 ] TEST-BYTE
-	#ff #ff SFT [ #00 ] TEST-BYTE
-	#ffff #11 SFT2 [ #fffe ] TEST-SHORT
-	#ffff #12 SFT2 [ #7ffe ] TEST-SHORT
-	#ffff #21 SFT2 [ #fffc ] TEST-SHORT
+	#ff #12 SFT [ #7e ] TEST-BYTE
+	MODE
+	#ffff #01 SFT2 [ #7fff ] TEST-SHORT
+	#ffff #70 SFT2 [ #ff80 ] TEST-SHORT
 	#ffff #7e SFT2 [ #0180 ] TEST-SHORT
-	#ffff #83 SFT2 [ #ff00 ] TEST-SHORT
-	#ffff #92 SFT2 [ #fe00 ] TEST-SHORT
-	#ffff #2a SFT2 [ #00fc ] TEST-SHORT
 	#ffff #e3 SFT2 [ #c000 ] TEST-SHORT
 	TYPE
 
