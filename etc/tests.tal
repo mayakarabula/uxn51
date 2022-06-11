@@ -8,9 +8,8 @@
 
 |0000
 
-	@id $1
-	@sum $1
-	@zeropage &byte $1 &short $2
+	@zeropage 
+		&byte $1 &short $2
 
 |0100
 
@@ -98,51 +97,59 @@
 	#37 #3f MUL [ #89 ] TEST-BYTE
 	#10 #02 MUL [ #20 ] TEST-BYTE
 	MODE
+	#1000 #0003 MUL2 [ #3000 ] TEST-SHORT
+	#abcd #1234 MUL2 [ #4fa4 ] TEST-SHORT
+	#8000 #0200 MUL2 [ #0000 ] TEST-SHORT
+	#2222 #0003 MUL2 [ #6666 ] TEST-SHORT
 	OPCODE
 
 	( DIV )
 	#10 #02 DIV [ #08 ] TEST-BYTE
+	#20 #20 DIV [ #08 ] TEST-BYTE
+	#34 #01 DIV [ #08 ] TEST-BYTE
+	#02 #ef DIV [ #08 ] TEST-BYTE
 	MODE
 	#1000 #0040 DIV2 [ #0040 ] TEST-SHORT
+	#abcd #1234 DIV2 [ #0040 ] TEST-SHORT
+	#8000 #0200 DIV2 [ #0040 ] TEST-SHORT
+	#2222 #0003 DIV2 [ #0040 ] TEST-SHORT
 	TYPE
 
 	( Stack )
 
 	( INC )
-	#00 INC [ #01 ] TEST-BYTE
 	#01 INC [ #02 ] TEST-BYTE
-	#ff INC [ #00 ] TEST-BYTE
-	#ab INC [ #ac ] TEST-BYTE
 	MODE
-	#0000 INC2 [ #0001 ] TEST-SHORT
 	#0001 INC2 [ #0002 ] TEST-SHORT
-	#00ff INC2 [ #0100 ] TEST-SHORT
-	#ffff INC2 [ #0000 ] TEST-SHORT
 	OPCODE
 
 	( POP )
-	#02 #03 POP [ #02 ] TEST-BYTE
+	#0a #0b POP [ #0a ] TEST-BYTE
 	MODE
-	#02 POPk [ #02 ] TEST-BYTE
+	#0a0b #0c0d POP2 [ #0a0b ] TEST-SHORT
 	OPCODE
+
 	( DUP )
-	#02 DUP ADD [ #04 ] TEST-BYTE
+	#0a DUP ADD [ #14 ] TEST-BYTE
 	MODE
-	#02 DUPk ADD ADD [ #06 ] TEST-BYTE
+	#0a0b DUP2 ADD2 [ #1416 ] TEST-SHORT
 	OPCODE
+
 	( NIP )
-	#01 #02 #03 NIP ADD [ #04 ] TEST-BYTE
+	#12 #34 #56 NIP ADD [ #68 ] TEST-BYTE
 	MODE
-	#12 #34 NIPk ADD ADD [ #7a ] TEST-BYTE
+	#1234 #5678 #9abc NIP2 ADD2 [ #acf0 ] TEST-SHORT
+
 	OPCODE
 	( SWP )
 	#02 #10 SWP DIV [ #08 ] TEST-BYTE
 	MODE
-	#02 #10 SWPk ADD2 MUL [ #44 ] TEST-BYTE
+
 	OPCODE
 	( OVR )
 	#02 #10 OVR DIV ADD [ #0a ] TEST-BYTE
 	OPCODE
+
 	( ROT )
 	#02 #04 #10 ROT DIV ADD [ #0c ] TEST-BYTE
 	TYPE
@@ -254,7 +261,10 @@
 	#1234 #5678 SUB2k SUB2 SUB2 [ #7778 ] TEST-SHORT
 	#12 #34 MULk MUL MUL [ #40 ] TEST-BYTE
 	#1234 #5678 MUL2k MUL2 MUL2 [ #2400 ] TEST-SHORT
-	MODE
+	#02 POPk [ #02 ] TEST-BYTE
+	#02 DUPk ADD ADD [ #06 ] TEST-BYTE
+	#12 #34 NIPk ADD ADD [ #7a ] TEST-BYTE
+	#02 #10 SWPk ADD2 MUL [ #44 ] TEST-BYTE
 	#03 INCk ADD [ #07 ] TEST-BYTE
 
 	OPCODE
@@ -262,6 +272,6 @@
 	#010f DEO
 
 BRK
-	&complete-txt "Completed: 20 $1
 
-@absolute &byte $1 &short $2
+@absolute 
+	&byte $1 &short $2
