@@ -135,8 +135,14 @@
 
 	( POP )
 	#0a #0b POP [ #0a ] TEST-BYTE
+	#0a #0b #0c POP POP [ #0a ] TEST-BYTE
+	#0a #0b #0c ADD POP [ #0a ] TEST-BYTE
+	#0a #0b #0c POP ADD [ #15 ] TEST-BYTE
 	MODE
 	#0a0b #0c0d POP2 [ #0a0b ] TEST-SHORT
+	#0a0b #0c0d #0e0f POP2 POP2 [ #0a0b ] TEST-SHORT
+	#0a0b #0c0d #0e0f ADD2 POP2 [ #0a0b ] TEST-SHORT
+	#0a0b #0c0d #0e0f POP2 ADD2 [ #1618 ] TEST-SHORT
 	OPCODE
 
 	( DUP )
