@@ -16,7 +16,7 @@
 %WST { #ff }
 %RST { #fe }
 
-|00 @System &vector $2 &wst $1 &rst $1 &pad $4 &r $2 &g $2 &b $2
+|00 @System &vector $2 &stacks &wst $1 &rst $1 &pad $4 &r $2 &g $2 &b $2
 
 |0000
 
@@ -25,8 +25,8 @@
 
 |0100
 
-	( set rst as #fe page ) RST .System/rst DEO
-	( set wst as #ff page ) WST .System/wst DEO
+	( set stacks location ) 
+	WST RST .System/stacks DEO2
 
 	( Logic )
 
