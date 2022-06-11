@@ -12,6 +12,9 @@
 %MODE { #20 EMIT }
 %OPCODE { #0a EMIT }
 %TYPE { OPCODE OPCODE }
+%GET-ERR { #fe LDA }
+%WST { #ff }
+%RST { #fe }
 
 |00 @System &vector $2 &wst $1 &rst $1 &pad $4 &r $2 &g $2 &b $2
 
@@ -22,8 +25,8 @@
 
 |0100
 
-	( set wst as #fe page ) #fe .System/rst DEO
-	( set wst as #ff page ) #ff .System/wst DEO
+	( set rst as #fe page ) RST .System/rst DEO
+	( set wst as #ff page ) WST .System/wst DEO
 
 	( Logic )
 
@@ -328,9 +331,7 @@ JMP2r
 
 	;error-txt ;print-str JSR2
 	;wst-txt ;print-str JSR2
-	#2018 DEO
-	#fffe LDA ;print/byte JSR2 #0a18 DEO
-	( reset wst ) #00 #ffff STA
+	#20 EMIT WST GET-ERR ;print/byte JSR2 #0a EMIT
 	;err2 JMP2
 
 BRK
@@ -339,9 +340,7 @@ BRK
 
 	;error-txt ;print-str JSR2
 	;wst-txt ;print-str JSR2
-	#2018 DEO
-	#fffe LDA ;print/byte JSR2 #0a18 DEO
-	( reset wst ) #00 #ffff STA
+	#20 EMIT WST GET-ERR ;print/byte JSR2 #0a EMIT
 	;err3 JMP2
 
 BRK
@@ -350,9 +349,7 @@ BRK
 
 	;error-txt ;print-str JSR2
 	;rst-txt ;print-str JSR2
-	#2018 DEO
-	#fffe LDA ;print/byte JSR2 #0a18 DEO
-	( reset wst ) #00 #feff STA
+	#20 EMIT RST GET-ERR ;print/byte JSR2 #0a EMIT
 	;end JMP2
 
 BRK
