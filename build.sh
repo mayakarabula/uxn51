@@ -1,5 +1,8 @@
 #!/bin/sh -e
 
+rm -rf bin
+mkdir bin
+
 echo "Assembling unicycle.."
 uxnasm etc/unicycle.tal bin/unicycle.rom
 echo "Assembling formatter.."
