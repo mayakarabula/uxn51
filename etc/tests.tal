@@ -13,8 +13,6 @@
 %OPCODE { #0a EMIT }
 %TYPE { OPCODE OPCODE }
 %GET-ERR { #fe LDA }
-%WST { #ff }
-%RST { #fe }
 
 |00 @System &vector $2 &stacks &wst $1 &rst $1 &pad $4 &r $2 &g $2 &b $2
 
@@ -24,9 +22,6 @@
 		&byte $1 &short $2
 
 |0100
-
-	( set stacks location ) 
-	WST RST .System/stacks DEO2
 
 	( Logic )
 
@@ -301,21 +296,6 @@
 	#12 #34 ADDk ADD ADD [ #8c ] TEST-BYTE
 	OPCODE
 
-	( Error: Division By Zero )
-	;on-error-division #00 DEO2
-	#10 #00 DIV
-
-	@err2
-	( Error: Working Stack Underflow )
-	;on-error-underflow #00 DEO2
-	POP
-
-	@err3
-	( Error: Return Stack Underflow )
-	;on-error-underflowr #00 DEO2
-	POPr
-
-	@end
 	#010e DEO
 	#010f DEO
 
@@ -326,58 +306,6 @@ BRK
 	ADD
 
 JMP2r
-
-@on-error-division ( -> )
-
-	WST ;print-err JSR2
-	;err2 JMP2
-
-BRK
-
-@on-error-underflow ( -> )
-
-	WST ;print-err JSR2
-	;err3 JMP2
-
-BRK
-
-@on-error-underflowr ( -> )
-
-	RST ;print-err JSR2
-	;end JMP2
-
-BRK
-
-@print-err ( page -- )
-
-	;err-txt ;print-str JSR2
-	;rst-txt ;print-str JSR2
-	#20 EMIT 
-	GET-ERR ;print/byte JSR2 
-	#0a EMIT
-
-JMP2r
-
-@print-str ( str* -- )
-
-	&while
-		LDAk #18 DEO
-		INC2 LDAk ,&while JCN
-	POP2
-
-JMP2r
-
-@print ( short* -- )
-
-	SWP ,&byte JSR
-	&byte ( byte -- ) DUP #04 SFT ,&char JSR
-	&char ( char -- ) #0f AND DUP #09 GTH #27 MUL ADD #30 ADD #18 DEO
-
-JMP2r
-
-@err-txt "Error $1
-@wst-txt "(wst) $1
-@rst-txt "(rst) $1
 
 @absolute 
 	&byte $1 &short $2
