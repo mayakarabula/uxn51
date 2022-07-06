@@ -2,9 +2,7 @@
 
 ( Requirements: 
 	EQU/EQU2 should put #00 or #01 on the stack
-	#18 DEO should output ascii character to console
-	#02 DEO should set location of working stack in memory
-	#03 DEO should set location of return stack in memory )
+	#18 DEO should output ascii character to console )
 
 %EMIT { #18 DEO }
 %TEST-SHORT { EQU2 #30 ADD EMIT }
@@ -12,9 +10,6 @@
 %MODE { #20 EMIT }
 %OPCODE { #0a EMIT }
 %TYPE { OPCODE OPCODE }
-%GET-ERR { #fe LDA }
-
-|00 @System &vector $2 &stacks &wst $1 &rst $1 &pad $4 &r $2 &g $2 &b $2
 
 |0000
 
