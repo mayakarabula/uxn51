@@ -1,34 +1,43 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="utf-8"/>
-	<script src="etc/program.js"></script>
-	<script src="src/emu.js"></script>
-	<script src="src/uxn.js"></script>
-</head>
-<body>
-	<input type="value" placeholder="Uxntal Interpreter" id="asm" autofocus/>
-	<span id="res"></span>
-	<script type="text/javascript">
-		'use strict'
+  <head>
+    <meta charset="utf-8" />
+    <script src="etc/program.js"></script>
+    <script src="src/emu.js"></script>
+    <script src="src/devices/screen.js"></script>
+    <script src="src/uxn.js"></script>
+  </head>
+  <body>
+    <input type="value" placeholder="Uxntal Interpreter" id="asm" autofocus />
+    <span id="res"></span>
+    <script type="text/javascript">
+      'use strict'
 
-		let asm_el = document.getElementById("asm")
-		let res = document.getElementById("res")
-		let emulator = new Emu()
+      window.onload = () => {
+        let asm_el = document.getElementById('asm')
+        let res = document.getElementById('res')
+        let emulator = new Emu()
 
-		emulator.console.display = res
-		emulator.uxn.load(program).eval(0x0100)
+        console.log('pre')
+        emulator.console.display = res
+        emulator.uxn.load(program).eval(0x0100)
 
-		asm_el.addEventListener("keydown", function (event) {
-			if (event.key === "Enter") {
-				event.preventDefault();
-				for (let i = 0; i < asm_el.value.length; i++) 
-					emulator.console.input(asm_el.value.charAt(i).charCodeAt(0))
-				emulator.console.input(0x0a)
-				asm_el.value = ""
-			}
-		})
-	</script>
-	<noscript>This form requires Javascript.</noscript>
-</body>
-</html> 
+        asm_el.addEventListener('keydown', function (event) {
+          if (event.key === 'Enter') {
+            event.preventDefault()
+            for (let i = 0; i < asm_el.value.length; i++)
+              emulator.console.input(asm_el.value.charAt(i).charCodeAt(0))
+            emulator.console.input(0x0a)
+            asm_el.value = ''
+          }
+        })
+      }
+    </script>
+    <noscript>This form requires Javascript.</noscript>
+
+    <br />
+    <br />
+    <br />
+    <canvas width="512" height="320" id="screen" />
+  </body>
+</html>
