@@ -1,6 +1,6 @@
 # Uxn5
 
-An emulator for the [Uxn stack-machine](https://wiki.xxiivv.com/site/uxn.html), written in Javascript. 
+An emulator for the [Uxn stack-machine](https://wiki.xxiivv.com/site/uxn.html), written in Javascript.
 
 ## Usage
 
@@ -14,16 +14,16 @@ Include the boot sequence in your website, and evaluate a program:
 
 ```html
 <script type="text/javascript">
-	const uxn = new Uxn()
-	uxn.load(program).eval(0x0100)
+  const uxn = new Uxn();
+  uxn.load(program).eval(0x0100);
 </script>
 ```
 
 ## Devices
 
-- `00` system(missing)
+- `00` system(partial)
 - `10` console(partial)
-- `20` screen(missing)
+- `20` screen(partial)
 - `30` audio(missing)
 - `70` midi(missing)
 - `80` controller(missing)
@@ -49,10 +49,10 @@ uxnasm etc/format.tal bin/format.rom && uxncli bin/format.rom bin/tests.rom > et
 
 The following resources are a good place to start:
 
-* [XXIIVV — uxntal](https://wiki.xxiivv.com/site/uxntal.html)
-* [XXIIVV — uxntal cheatsheet](https://wiki.xxiivv.com/site/uxntal_cheatsheet.html)
-* [XXIIVV — uxntal reference](https://wiki.xxiivv.com/site/uxntal_reference.html)
-* [compudanzas — uxn tutorial](https://compudanzas.net/uxn_tutorial.html)
+- [XXIIVV — uxntal](https://wiki.xxiivv.com/site/uxntal.html)
+- [XXIIVV — uxntal cheatsheet](https://wiki.xxiivv.com/site/uxntal_cheatsheet.html)
+- [XXIIVV — uxntal reference](https://wiki.xxiivv.com/site/uxntal_reference.html)
+- [compudanzas — uxn tutorial](https://compudanzas.net/uxn_tutorial.html)
 
 You can also find us in [`#uxn` on irc.esper.net](ircs://irc.esper.net:6697/#uxn).
 
